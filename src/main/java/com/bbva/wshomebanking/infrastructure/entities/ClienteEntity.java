@@ -3,31 +3,28 @@ package com.bbva.wshomebanking.infrastructure.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "clientes")
-public class Cliente {
+public class ClienteEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+    private UUID id;
     private String nombre;
     private String apellido;
-    private String direccion;
-    private String numero;
-    private String departamento;
-    private String piso;
-    private String ciudad;
-    private String codigoPostal;
-    private String telefono;
     private String email;
+    private String direccion;
+    private String telefono;
     @OneToMany(mappedBy = "cliente")
-    private List<ClienteCuenta> cuentas;
+    private List<ClienteCuentaEntity> cuentas;
 
 
 }
