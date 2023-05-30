@@ -2,11 +2,17 @@ package com.bbva.wshomebanking.infrastructure.entities;
 
 import com.bbva.wshomebanking.domain.models.enums.TipoTitular;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "clientes_cuentas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClienteCuentaEntity {
 
     /*@Id

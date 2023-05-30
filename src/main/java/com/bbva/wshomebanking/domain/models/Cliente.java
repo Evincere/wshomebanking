@@ -1,18 +1,18 @@
 package com.bbva.wshomebanking.domain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Cliente {
 
+    private UUID id;
     private String nombre;
     private String apellido;
     private String email;

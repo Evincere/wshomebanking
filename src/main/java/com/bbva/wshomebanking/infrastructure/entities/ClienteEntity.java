@@ -1,8 +1,7 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
@@ -12,6 +11,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "clientes")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClienteEntity {
 
     @Id
