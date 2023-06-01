@@ -4,9 +4,13 @@ import com.bbva.wshomebanking.domain.models.Cliente;
 import com.bbva.wshomebanking.infrastructure.entities.ClienteCuentaEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClienteEntity;
 import com.bbva.wshomebanking.infrastructure.entities.CuentaEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component()
+@RequiredArgsConstructor
 public class ClienteEntityMapper {
 
     public ClienteEntity domainToEntity(Cliente cliente) {

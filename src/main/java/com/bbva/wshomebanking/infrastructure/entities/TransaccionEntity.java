@@ -1,13 +1,10 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
-import com.bbva.wshomebanking.domain.models.embeddable.ClienteCuentaId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Getter

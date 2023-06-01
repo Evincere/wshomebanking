@@ -7,14 +7,18 @@ import java.util.UUID;
 
 public interface IClienteRepository {
 
-    Cliente saveClient(Cliente client);
+    Cliente saveCliente(Cliente cliente);
 
     List<Cliente> getAll();
 
     Cliente findById(UUID id);
 
     boolean existsByEmail(String email);
-
-    boolean existsByEmailAndLastName(String email, String lastName);
+/*
+    boolean existsByEmailAndLastNameAndFirstName(String email,
+                                                 String apellido,
+                                                 String nombre);
+*/
+    Cliente update(Cliente client);
 
 }

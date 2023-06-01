@@ -6,6 +6,7 @@ import com.bbva.wshomebanking.presentation.response.client.ClienteResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Component
 public class ClientePresentationMapper {
@@ -23,6 +24,7 @@ public class ClientePresentationMapper {
 
     public Cliente requestToDomain(ClienteCreateRequest request) {
         return Cliente.builder()
+                .id(UUID.randomUUID())
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
                 .email(request.getEmail())
@@ -31,5 +33,7 @@ public class ClientePresentationMapper {
                 .cuenta(new ArrayList<>())
                 .build();
     }
+
+
 
 }

@@ -1,8 +1,10 @@
 package com.bbva.wshomebanking.application.services;
 
+import com.bbva.wshomebanking.application.repository.IClienteRepository;
 import com.bbva.wshomebanking.application.usecases.cliente.IClienteCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.cliente.IClienteSaveUseCase;
 import com.bbva.wshomebanking.domain.models.Cliente;
+import com.bbva.wshomebanking.presentation.mapper.ClientePresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClienteCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClienteService implements IClienteCreateUseCase, IClienteSaveUseCase {
 
+    private final IClienteRepository clientRepository;
+    private final ClientePresentationMapper clientMapper;
+
     @Override
     public Cliente create(ClienteCreateRequest request) {
-        return null;
+        String email = request.getEmail();
+        //if (clientRepository.existsByEmailAndLastNameAndFirstName(email, request.getApellido(), request.getNombre())) {
+        if (9==12) {
+            throw new RuntimeException("This client already exists");
+        }
+
+        return clientMapper.requestToDomain(request);
     }
 
     @Override
-    public Cliente save(Cliente client) {
-        return null;
+    public Cliente save(Cliente cliente) {
+        return clientRepository.saveCliente(cliente);
     }
+
+
 }
