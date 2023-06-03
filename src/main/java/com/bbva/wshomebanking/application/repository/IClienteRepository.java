@@ -14,11 +14,7 @@ public interface IClienteRepository {
     Cliente findById(UUID id);
 
     boolean existsByEmail(String email);
-/*
-    boolean existsByEmailAndLastNameAndFirstName(String email,
-                                                 String apellido,
-                                                 String nombre);
-*/
+
     Cliente update(Cliente client);
 
 }

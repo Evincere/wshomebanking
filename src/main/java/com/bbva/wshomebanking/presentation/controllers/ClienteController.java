@@ -2,7 +2,9 @@ package com.bbva.wshomebanking.presentation.controllers;
 
 import com.bbva.wshomebanking.application.usecases.cliente.IClienteCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.cliente.IClienteSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.cuenta.ICuentaCreateUseCase;
 import com.bbva.wshomebanking.domain.models.Cliente;
+import com.bbva.wshomebanking.domain.models.Cuenta;
 import com.bbva.wshomebanking.presentation.mapper.ClientePresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClienteCreateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClienteResponse;
@@ -28,6 +30,7 @@ public class ClienteController {
 
     private final IClienteCreateUseCase clientCreateUseCase;
     private final IClienteSaveUseCase clienteSaveUseCase;
+    private final ICuentaCreateUseCase cuentaCreateUseCase;
     private final ClientePresentationMapper clientMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
@@ -39,6 +42,8 @@ public class ClienteController {
 
         Cliente client = clientCreateUseCase.create(request);
         Cliente savedClient = clienteSaveUseCase.save(client);
+
+        // Cuenta cuenta = cuentaCreateUseCase.create(??);
         ClienteResponse response = clientMapper.domainToResponse(savedClient);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 

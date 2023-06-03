@@ -19,8 +19,8 @@ public class ClienteService implements IClienteCreateUseCase, IClienteSaveUseCas
     @Override
     public Cliente create(ClienteCreateRequest request) {
         String email = request.getEmail();
-        //if (clientRepository.existsByEmailAndLastNameAndFirstName(email, request.getApellido(), request.getNombre())) {
-        if (9==12) {
+        if (clientRepository.existsByEmail(email)) {
+            //TODO: implementar una excepcion descriptiva
             throw new RuntimeException("This client already exists");
         }
 
@@ -31,6 +31,5 @@ public class ClienteService implements IClienteCreateUseCase, IClienteSaveUseCas
     public Cliente save(Cliente cliente) {
         return clientRepository.saveCliente(cliente);
     }
-
 
 }

@@ -31,8 +31,15 @@ public class ClienteRepositoryImpl implements IClienteRepository {
         clientEntity.setCuentas(new ArrayList<ClienteCuentaEntity>());
 
         clienteSpringRepository.save(clientEntity);
+        //cuentaSpringRepository.save(cuentaEntity);
+        //cuentaSpringRepository.save(cuentaClienteEntity);
 
         return clienteEntityMapper.entityToDomain(clientEntity);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return clienteSpringRepository.existsByEmail(email);
     }
 
     @Override
@@ -45,15 +52,7 @@ public class ClienteRepositoryImpl implements IClienteRepository {
         return null;
     }
 
-    @Override
-    public boolean existsByEmail(String email) {
-        return false;
-    }
 
-    /*@Override
-    public boolean existsByEmailAndLastNameAndFirstName(String email, String apellido, String nombre) {
-        return false;
-    }*/
 
     @Override
     public Cliente update(Cliente client) {
