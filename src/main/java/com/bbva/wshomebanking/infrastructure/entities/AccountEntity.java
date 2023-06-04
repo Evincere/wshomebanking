@@ -12,22 +12,17 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "cuentas")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(name="seq", initialValue=10000, allocationSize=5)
+@Table(name = "Accounts")
 public class AccountEntity {
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
-    private UUID id;
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
-    @Column
-    private long numeroCuenta;
-    private BigDecimal saldo;
-    private Currency currency;
-    @OneToMany(mappedBy = "cuenta")
-    private ArrayList<ClientAccountEntity> clientes;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long accountNumber;
+    private BigDecimal balance;
+    private String currency;
+    @OneToMany(mappedBy = "account")
+    private ArrayList<ClientAccountEntity> clients;
 
 }

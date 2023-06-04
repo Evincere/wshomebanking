@@ -13,10 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Account {
-    private UUID id;
-    private long numeroCuenta;
-    private BigDecimal saldo;
-    private Currency currency;
-    private List<Client> clientes;
+    private long accountNumber;
+    private BigDecimal balance;
+    private String currency;
+    private List<Client> clients;
 
 }

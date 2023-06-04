@@ -14,23 +14,23 @@ public class ClientPresentationMapper {
     public ClientResponse domainToResponse(Client client) {
         return ClientResponse.builder()
                 .id(client.getId())
-                .nombre(client.getNombre())
-                .apellido(client.getApellido())
+                .personalId(client.getPersonalId())
+                .firstName(client.getFirstName())
+                .lastName(client.getFirstName())
                 .email(client.getEmail())
-                .telefono(client.getTelefono())
-                .direccion(client.getDireccion())
+                .phone(client.getPhone())
+                .address(client.getAddress())
                 .build();
     }
 
     public Client requestToDomain(ClientCreateRequest request) {
         return Client.builder()
-                .id(UUID.randomUUID())
-                .nombre(request.getNombre())
-                .apellido(request.getApellido())
+                .personalId(request.getPersonalId())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
-                .telefono(request.getTelefono())
-                .direccion(request.getDireccion())
-                .account(new ArrayList<>())
+                .phone(request.getPhone())
+                .address(request.getAddress())
                 .build();
     }
 

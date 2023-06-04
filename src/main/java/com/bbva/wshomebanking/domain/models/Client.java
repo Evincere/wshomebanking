@@ -12,12 +12,13 @@ import java.util.UUID;
 @Builder
 public class Client {
 
-    private UUID id;
-    private String nombre;
-    private String apellido;
+    private long id;
+    private String personalId;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String direccion;
-    private String telefono;
-    private List<Account> account;
+    private String address;
+    private String phone;
+    private List<Account> accounts;
 
 }

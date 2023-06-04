@@ -1,11 +1,15 @@
 package com.bbva.wshomebanking.infrastructure.repositories;
 
+import com.bbva.wshomebanking.application.repository.IClientAccountRepository;
 import com.bbva.wshomebanking.application.repository.IClientRepository;
+import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
 import com.bbva.wshomebanking.infrastructure.entities.AccountEntity;
+import com.bbva.wshomebanking.infrastructure.mapper.AccountEntityMapper;
 import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
+import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientSpringRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,14 +23,26 @@ import java.util.UUID;
 public class ClientRepositoryImpl implements IClientRepository {
 
     private final IClientSpringRepository clienteSpringRepository;
+    private final IAccountSpringRepository accountSpringRepository;
+    private final IClientAccountRepository clientAccountRepository;
     private final ClientEntityMapper clientEntityMapper;
+    private final AccountEntityMapper accountEntityMapper;
 
 
     @Override
-    public Client saveCliente(Client cliente) {
+    public Client saveCliente(Client cliente, Account account) {
         ClientEntity clientEntity = clientEntityMapper.domainToEntity(cliente);
+        AccountEntity accountEntity = accountEntityMapper.domainToEntity(account);
+
+        ClientAccountEntity clientAccountEntity = new ClientAccountEntity();
+        clientAccountEntity.setClient(clientEntity);
+        clientAccountEntity.setAccount(accountEntity);
+        clientAccountEntity.setTipoTitular("TITULAR");
 
         clienteSpringRepository.save(clientEntity);
+        accountSpringRepository.save(accountEntity);
+        clientAccountRepository.save(clientAccountEntity);
+
 
         return clientEntityMapper.entityToDomain(clientEntity);
     }

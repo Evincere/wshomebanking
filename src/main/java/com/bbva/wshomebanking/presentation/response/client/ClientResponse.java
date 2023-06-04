@@ -11,10 +11,11 @@ import java.util.UUID;
 @Setter
 public class ClientResponse {
 
-    private UUID id;
-    private String nombre;
-    private String apellido;
+    private long id;
+    private String personalId;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String telefono;
-    private String direccion;
+    private String phone;
+    private String address;
 }

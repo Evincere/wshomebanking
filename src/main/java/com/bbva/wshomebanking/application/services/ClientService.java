@@ -3,6 +3,7 @@ package com.bbva.wshomebanking.application.services;
 import com.bbva.wshomebanking.application.repository.IClientRepository;
 import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
+import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
@@ -28,8 +29,8 @@ public class ClientService implements IClientCreateUseCase, IClientSaveUseCase {
     }
 
     @Override
-    public Client save(Client cliente) {
-        return clientRepository.saveCliente(cliente);
+    public Client save(Client cliente, Account account) {
+        return clientRepository.saveCliente(cliente, account);
     }
 
 }

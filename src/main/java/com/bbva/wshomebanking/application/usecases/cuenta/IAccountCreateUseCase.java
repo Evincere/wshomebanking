@@ -6,6 +6,6 @@ import com.bbva.wshomebanking.domain.models.enums.Currency;
 
 public interface IAccountCreateUseCase {
 
-    public Account create(Client client, Currency currency);
+    public Account create(Client client, String currency);
 
 }

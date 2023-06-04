@@ -20,7 +20,7 @@ public class AccountService implements IAccountCreateUseCase, IAccountSaveUseCas
     private final AccountPresentationMapper accountMapper;
 
     @Override
-    public Account create(Client client, Currency currency) {
+    public Account create(Client client, String currency) {
         return accountMapper.clientAndCurrencyToDomain(client, currency);
     }
 

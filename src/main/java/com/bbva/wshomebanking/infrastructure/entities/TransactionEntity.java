@@ -9,23 +9,23 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
-@Table(name = "transacciones")
+@Table(name = "Transactions")
 public class TransactionEntity {
 
-    /*@Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
-    private UUID id;*/
     @Id
-    @ManyToOne
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long transactionId;
+
+    @Id
+    @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "clienteId", referencedColumnName = "clienteId"),
-            @JoinColumn(name = "cuentaId", referencedColumnName = "cuentaId")
+            @JoinColumn(name = "clientId", referencedColumnName = "clientId"),
+            @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     })
     private ClientAccountEntity clientAccountEntity;
 
-    private String tipo;
-    private BigDecimal monto;
+    private String type;
+    private BigDecimal amount;
 
 
 }

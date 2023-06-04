@@ -14,30 +14,26 @@ public class ClientEntityMapper {
     public ClientEntity domainToEntity(Client cliente) {
         return ClientEntity.builder()
                 .id(cliente.getId())
-                .nombre(cliente.getNombre())
-                .apellido(cliente.getApellido())
+                .personalId(cliente.getPersonalId())
+                .firstName(cliente.getFirstName())
+                .lastName(cliente.getLastName())
                 .email(cliente.getEmail())
-                .telefono(cliente.getTelefono())
-                .direccion(cliente.getDireccion())
-                .cuentas(new ArrayList<>())
+                .phone(cliente.getPhone())
+                .address(cliente.getAddress())
+                .accounts(new ArrayList<>())
                 .build();
     }
 
     public Client entityToDomain(ClientEntity clientEntity) {
         Client cliente = new Client();
         cliente.setId(clientEntity.getId());
-        cliente.setNombre(clientEntity.getNombre());
-        cliente.setApellido(clientEntity.getApellido());
+        cliente.setPersonalId(clientEntity.getPersonalId());
+        cliente.setFirstName(clientEntity.getFirstName());
+        cliente.setLastName(clientEntity.getLastName());
         cliente.setEmail(clientEntity.getEmail());
-        cliente.setTelefono(clientEntity.getTelefono());
-        cliente.setDireccion(clientEntity.getDireccion());
-        cliente.setAccount(new ArrayList<>());
-        // TODO: esto lo copie tal cual estaba en el proyecto de Sergio, pero no anda
-        /*
-        for (ClienteCuentaEntity clienteCuentaEntity : clienteEntity.getCuentas()) {
-            cliente.getCuenta().add();
-        }
-         */
+        cliente.setPhone(clientEntity.getPhone());
+        cliente.setAddress(clientEntity.getAddress());
+        cliente.setAccounts(new ArrayList<>());
 
         return cliente;
     }

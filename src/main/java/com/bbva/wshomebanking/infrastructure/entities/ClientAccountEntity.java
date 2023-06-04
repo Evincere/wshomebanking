@@ -4,32 +4,38 @@ import com.bbva.wshomebanking.domain.models.enums.AccountHolderType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "clientes_cuentas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "ClientsAccounts")
 public class ClientAccountEntity {
 
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;*/
-
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "clientId")
+    private ClientEntity client;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "clienteId")
-    private ClientEntity cliente;
+    @JoinColumn(name = "accountId")
+    private AccountEntity account;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "cuentaId")
-    private AccountEntity cuenta;
+    @Column(name = "holderType", columnDefinition = "varchar(50)")
+    private String tipoTitular;
 
-    @Column(name = "tipo_titular", columnDefinition = "varchar(50)")
-    private AccountHolderType accountHolderType;
+
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumns({
+            @JoinColumn(name = "clientId", referencedColumnName = "clientId"),
+            @JoinColumn(name = "accountId", referencedColumnName = "accountId")
+    })
+    private List<TransactionEntity> transactions;
 
 
 

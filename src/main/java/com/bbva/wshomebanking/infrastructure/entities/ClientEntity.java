@@ -10,23 +10,23 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "clientes")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "Clients")
 public class ClientEntity {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
-    private UUID id;
-    private String nombre;
-    private String apellido;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String personalId;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String direccion;
-    private String telefono;
-    @OneToMany(mappedBy = "cliente")
-    private List<ClientAccountEntity> cuentas;
+    private String address;
+    private String phone;
+    @OneToMany(mappedBy = "client")
+    private List<ClientAccountEntity> accounts;
 
 
 }

@@ -13,11 +13,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AccountResponse {
-
-    private UUID id;
-    private long numeroCuenta;
-    private BigDecimal saldo;
-    private Currency currency;
-    private List<Client> clientes;
+    private long accountNumber;
+    private BigDecimal balance;
+    private String currency;
+    private List<Client> clients;
 
 }

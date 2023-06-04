@@ -15,18 +15,17 @@ public class AccountEntityMapper {
 
     public AccountEntity domainToEntity(Account account) {
         return AccountEntity.builder()
-                .id(account.getId())
-                .saldo(account.getSaldo())
+                .accountNumber(account.getAccountNumber())
+                .balance(account.getBalance())
                 .currency(account.getCurrency())
                 .build();
     }
 
     public Account entityToDomain(AccountEntity accountEntity) {
         Account account = new Account();
-        account.setId(account.getId());
-        account.setNumeroCuenta(accountEntity.getNumeroCuenta());
+        account.setAccountNumber(account.getAccountNumber());
         account.setCurrency(accountEntity.getCurrency());
-        account.setSaldo(accountEntity.getSaldo());
+        account.setBalance(accountEntity.getBalance());
 
         return account;
     }

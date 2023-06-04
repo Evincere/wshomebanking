@@ -43,15 +43,14 @@ public class ClientController {
             return errorResponse;
         }
 
-        Currency currency = Currency.ARS;
+        String defaultCurrency = "ARS";
 
         Client client = clientCreateUseCase.create(request);
-        Account account = accountCreateUseCase.create(client, currency);
+        Account account = accountCreateUseCase.create(client, defaultCurrency);
 
-        Client savedClient = clienteSaveUseCase.save(client);
-        Account savedAccount = accountSaveUseCase.save(account);
+        Client savedClient = clienteSaveUseCase.save(client, account);
+        //Account savedAccount = accountSaveUseCase.save(account);
 
-        // Cuenta cuenta = cuentaCreateUseCase.create(??);
         ClientResponse response = clientMapper.domainToResponse(savedClient);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 

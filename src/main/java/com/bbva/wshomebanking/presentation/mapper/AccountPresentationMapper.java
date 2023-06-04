@@ -19,30 +19,27 @@ public class AccountPresentationMapper {
 
     public AccountResponse domainToResponse(Account account) {
         return AccountResponse.builder()
-                .id(account.getId())
-                .numeroCuenta(account.getNumeroCuenta())
+                .accountNumber(account.getAccountNumber())
                 .currency(account.getCurrency())
-                .saldo(BigDecimal.ZERO)
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 
     public Account requestToDomain(AccountCreateRequest request) {
         return Account.builder()
-                .id(UUID.randomUUID())
-                .currency(Currency.valueOf(request.getCurrency()))
-                .saldo(BigDecimal.ZERO)
+                .currency(request.getCurrency())
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 
-    public Account clientAndCurrencyToDomain(Client client, Currency currency) {
+    public Account clientAndCurrencyToDomain(Client client, String currency) {
         ArrayList<Client> clients = new ArrayList<Client>();
         clients.add(client);
 
         return Account.builder()
-                .id(UUID.randomUUID())
                 .currency(currency)
-                .saldo(BigDecimal.ZERO)
-                .clientes(clients)
+                .balance(BigDecimal.ZERO)
+                .clients(clients)
                 .build();
     }
 
