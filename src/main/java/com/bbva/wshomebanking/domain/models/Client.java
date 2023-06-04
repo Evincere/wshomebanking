@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Cliente {
+public class Client {
 
     private UUID id;
     private String nombre;
@@ -18,6 +18,6 @@ public class Cliente {
     private String email;
     private String direccion;
     private String telefono;
-    private List<Cuenta> cuenta;
+    private List<Account> account;
 
 }

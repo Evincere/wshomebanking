@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class ClienteCreateRequest {
+public class ClientCreateRequest {
 
     @NotBlank(message = "el nombre no puede estar vacío")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "El nombre debe contener solo caracteres alfabéticos")

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(name = "transacciones")
-public class TransaccionEntity {
+public class TransactionEntity {
 
     /*@Id
     @GeneratedValue(generator = "system-uuid")
@@ -22,7 +22,7 @@ public class TransaccionEntity {
             @JoinColumn(name = "clienteId", referencedColumnName = "clienteId"),
             @JoinColumn(name = "cuentaId", referencedColumnName = "cuentaId")
     })
-    private ClienteCuentaEntity clienteCuentaEntity;
+    private ClientAccountEntity clientAccountEntity;
 
     private String tipo;
     private BigDecimal monto;

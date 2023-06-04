@@ -1,6 +1,6 @@
 package com.bbva.wshomebanking.domain.models.enums;
 
-public enum TipoTransaccion {
+public enum TransactionType {
     DEPOSITO,
     EXTRACCION,
     TRANSFERENCIA

@@ -1,10 +1,8 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
-import com.bbva.wshomebanking.domain.models.enums.TipoTitular;
+import com.bbva.wshomebanking.domain.models.enums.AccountHolderType;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Table(name = "clientes_cuentas")
@@ -13,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClienteCuentaEntity {
+public class ClientAccountEntity {
 
     /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +21,15 @@ public class ClienteCuentaEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "clienteId")
-    private ClienteEntity cliente;
+    private ClientEntity cliente;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "cuentaId")
-    private CuentaEntity cuenta;
+    private AccountEntity cuenta;
 
     @Column(name = "tipo_titular", columnDefinition = "varchar(50)")
-    private TipoTitular tipoTitular;
+    private AccountHolderType accountHolderType;
 
 
 

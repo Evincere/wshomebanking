@@ -1,6 +1,6 @@
 package com.bbva.wshomebanking.domain.models.enums;
 
-public enum TipoTitular {
+public enum AccountHolderType {
     PRINCIPAL,
     COTITULAR,
     APODERADO

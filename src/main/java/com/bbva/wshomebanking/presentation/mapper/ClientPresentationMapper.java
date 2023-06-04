@@ -1,18 +1,18 @@
 package com.bbva.wshomebanking.presentation.mapper;
 
-import com.bbva.wshomebanking.domain.models.Cliente;
-import com.bbva.wshomebanking.presentation.request.client.ClienteCreateRequest;
-import com.bbva.wshomebanking.presentation.response.client.ClienteResponse;
+import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 @Component
-public class ClientePresentationMapper {
+public class ClientPresentationMapper {
 
-    public ClienteResponse domainToResponse(Cliente client) {
-        return ClienteResponse.builder()
+    public ClientResponse domainToResponse(Client client) {
+        return ClientResponse.builder()
                 .id(client.getId())
                 .nombre(client.getNombre())
                 .apellido(client.getApellido())
@@ -22,15 +22,15 @@ public class ClientePresentationMapper {
                 .build();
     }
 
-    public Cliente requestToDomain(ClienteCreateRequest request) {
-        return Cliente.builder()
+    public Client requestToDomain(ClientCreateRequest request) {
+        return Client.builder()
                 .id(UUID.randomUUID())
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
                 .email(request.getEmail())
                 .telefono(request.getTelefono())
                 .direccion(request.getDireccion())
-                .cuenta(new ArrayList<>())
+                .account(new ArrayList<>())
                 .build();
     }
 

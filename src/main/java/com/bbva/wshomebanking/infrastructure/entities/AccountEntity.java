@@ -1,13 +1,11 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
-import com.bbva.wshomebanking.domain.models.enums.Moneda;
+import com.bbva.wshomebanking.domain.models.enums.Currency;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -15,16 +13,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "cuentas")
-public class CuentaEntity {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@SequenceGenerator(name="seq", initialValue=10000, allocationSize=5)
+public class AccountEntity {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private UUID id;
-    @GeneratedValue(generator = "GenerationType.IDENTITY")
-    private int numeroCuenta;
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
+    @Column
+    private long numeroCuenta;
     private BigDecimal saldo;
-    private Moneda moneda;
+    private Currency currency;
     @OneToMany(mappedBy = "cuenta")
-    private ArrayList<ClienteCuentaEntity> clientes;
+    private ArrayList<ClientAccountEntity> clientes;
 
 }

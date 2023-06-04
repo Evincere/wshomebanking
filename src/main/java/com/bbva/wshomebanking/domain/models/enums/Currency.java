@@ -1,6 +1,6 @@
 package com.bbva.wshomebanking.domain.models.enums;
 
-public enum Moneda {
+public enum Currency {
     ARS,
     USD
 }

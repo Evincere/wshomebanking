@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClienteEntity {
+public class ClientEntity {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -26,7 +26,7 @@ public class ClienteEntity {
     private String direccion;
     private String telefono;
     @OneToMany(mappedBy = "cliente")
-    private List<ClienteCuentaEntity> cuentas;
+    private List<ClientAccountEntity> cuentas;
 
 
 }

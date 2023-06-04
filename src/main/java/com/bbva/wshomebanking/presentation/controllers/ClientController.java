@@ -1,13 +1,15 @@
 package com.bbva.wshomebanking.presentation.controllers;
 
-import com.bbva.wshomebanking.application.usecases.cliente.IClienteCreateUseCase;
-import com.bbva.wshomebanking.application.usecases.cliente.IClienteSaveUseCase;
-import com.bbva.wshomebanking.application.usecases.cuenta.ICuentaCreateUseCase;
-import com.bbva.wshomebanking.domain.models.Cliente;
-import com.bbva.wshomebanking.domain.models.Cuenta;
-import com.bbva.wshomebanking.presentation.mapper.ClientePresentationMapper;
-import com.bbva.wshomebanking.presentation.request.client.ClienteCreateRequest;
-import com.bbva.wshomebanking.presentation.response.client.ClienteResponse;
+import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.cuenta.IAccountCreateUseCase;
+import com.bbva.wshomebanking.application.usecases.cuenta.IAccountSaveUseCase;
+import com.bbva.wshomebanking.domain.models.Account;
+import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.domain.models.enums.Currency;
+import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
+import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,25 +28,31 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/client")
 @RequiredArgsConstructor
-public class ClienteController {
+public class ClientController {
 
-    private final IClienteCreateUseCase clientCreateUseCase;
-    private final IClienteSaveUseCase clienteSaveUseCase;
-    private final ICuentaCreateUseCase cuentaCreateUseCase;
-    private final ClientePresentationMapper clientMapper;
+    private final IClientCreateUseCase clientCreateUseCase;
+    private final IClientSaveUseCase clienteSaveUseCase;
+    private final IAccountCreateUseCase accountCreateUseCase;
+    private final IAccountSaveUseCase accountSaveUseCase;
+    private final ClientPresentationMapper clientMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody ClienteCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> create(@Valid @RequestBody ClientCreateRequest request, BindingResult bindingResult) {
         ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
         if (errorResponse != null) {
             return errorResponse;
         }
 
-        Cliente client = clientCreateUseCase.create(request);
-        Cliente savedClient = clienteSaveUseCase.save(client);
+        Currency currency = Currency.ARS;
+
+        Client client = clientCreateUseCase.create(request);
+        Account account = accountCreateUseCase.create(client, currency);
+
+        Client savedClient = clienteSaveUseCase.save(client);
+        Account savedAccount = accountSaveUseCase.save(account);
 
         // Cuenta cuenta = cuentaCreateUseCase.create(??);
-        ClienteResponse response = clientMapper.domainToResponse(savedClient);
+        ClientResponse response = clientMapper.domainToResponse(savedClient);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
