@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Account {
-    private long accountNumber;
+    private int id;
     private BigDecimal balance;
     private String currency;
     private List<Client> clients;

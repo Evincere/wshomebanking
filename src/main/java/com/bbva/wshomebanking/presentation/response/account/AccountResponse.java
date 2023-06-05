@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AccountResponse {
-    private long accountNumber;
+    private int accountNumber;
     private BigDecimal balance;
     private String currency;
     private List<Client> clients;

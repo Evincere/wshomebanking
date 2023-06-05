@@ -5,6 +5,7 @@ import com.bbva.wshomebanking.application.repository.IClientRepository;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
+import com.bbva.wshomebanking.infrastructure.entities.ClientAccountId;
 import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
 import com.bbva.wshomebanking.infrastructure.entities.AccountEntity;
 import com.bbva.wshomebanking.infrastructure.mapper.AccountEntityMapper;
@@ -37,7 +38,11 @@ public class ClientRepositoryImpl implements IClientRepository {
         ClientAccountEntity clientAccountEntity = new ClientAccountEntity();
         clientAccountEntity.setClient(clientEntity);
         clientAccountEntity.setAccount(accountEntity);
-        clientAccountEntity.setTipoTitular("TITULAR");
+        clientAccountEntity.setHolderType("TITULAR");
+        ClientAccountId clientAccountId = new ClientAccountId();
+        clientAccountId.setClientId(cliente.getId());
+        clientAccountId.setAccountId(account.getId());
+        clientAccountEntity.setId(clientAccountId);
 
         clienteSpringRepository.save(clientEntity);
         accountSpringRepository.save(accountEntity);

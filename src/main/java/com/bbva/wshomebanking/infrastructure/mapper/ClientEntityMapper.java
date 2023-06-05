@@ -20,7 +20,7 @@ public class ClientEntityMapper {
                 .email(cliente.getEmail())
                 .phone(cliente.getPhone())
                 .address(cliente.getAddress())
-                .accounts(new ArrayList<>())
+                .clientAccounts(new ArrayList<>())
                 .build();
     }
 

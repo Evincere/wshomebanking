@@ -15,27 +15,23 @@ import java.util.List;
 @Table(name = "ClientsAccounts")
 public class ClientAccountEntity {
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "clientId")
-    private ClientEntity client;
+    @EmbeddedId
+    private ClientAccountId id;
 
-    @Id
+    @Column(name = "holder_type")
+    private String holderType;
+
+    // Omitted getters and setters
+
     @ManyToOne
-    @JoinColumn(name = "accountId")
+    @MapsId("accountId")
+    @JoinColumn(name = "account_id")
     private AccountEntity account;
 
-    @Column(name = "holderType", columnDefinition = "varchar(50)")
-    private String tipoTitular;
-
-
-    @Column
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumns({
-            @JoinColumn(name = "clientId", referencedColumnName = "clientId"),
-            @JoinColumn(name = "accountId", referencedColumnName = "accountId")
-    })
-    private List<TransactionEntity> transactions;
+    @ManyToOne
+    @MapsId("clientId")
+    @JoinColumn(name = "client_id")
+    private ClientEntity client;
 
 
 

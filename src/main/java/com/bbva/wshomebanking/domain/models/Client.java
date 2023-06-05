@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 public class Client {
 
-    private long id;
+    private int id;
     private String personalId;
     private String firstName;
     private String lastName;

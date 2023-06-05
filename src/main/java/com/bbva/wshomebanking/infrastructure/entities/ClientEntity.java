@@ -18,15 +18,15 @@ public class ClientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private String personalId;
     private String firstName;
     private String lastName;
     private String email;
     private String address;
     private String phone;
-    @OneToMany(mappedBy = "client")
-    private List<ClientAccountEntity> accounts;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<ClientAccountEntity> clientAccounts;
 
 
 }

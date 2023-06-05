@@ -19,7 +19,7 @@ public class AccountPresentationMapper {
 
     public AccountResponse domainToResponse(Account account) {
         return AccountResponse.builder()
-                .accountNumber(account.getAccountNumber())
+                .accountNumber(account.getId())
                 .currency(account.getCurrency())
                 .balance(BigDecimal.ZERO)
                 .build();

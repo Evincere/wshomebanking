@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 public class ClientResponse {
 
-    private long id;
+    private int id;
     private String personalId;
     private String firstName;
     private String lastName;

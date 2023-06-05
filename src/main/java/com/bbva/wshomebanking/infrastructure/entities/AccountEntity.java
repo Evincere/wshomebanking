@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,10 +20,10 @@ import java.util.UUID;
 public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long accountNumber;
+    private int id;
     private BigDecimal balance;
     private String currency;
-    @OneToMany(mappedBy = "account")
-    private ArrayList<ClientAccountEntity> clients;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<ClientAccountEntity> clientAccounts;
 
 }
