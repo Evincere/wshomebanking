@@ -4,6 +4,7 @@ import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface IClientRepository {
@@ -12,7 +13,7 @@ public interface IClientRepository {
 
     List<Client> getAll();
 
-    Client findById(UUID id);
+    Optional<Client> findById(int id);
 
     boolean existsByEmail(String email);
 

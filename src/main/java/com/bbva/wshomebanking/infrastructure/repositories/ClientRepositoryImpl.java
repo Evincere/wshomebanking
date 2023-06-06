@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -63,8 +64,13 @@ public class ClientRepositoryImpl implements IClientRepository {
     }
 
     @Override
-    public Client findById(UUID id) {
-        return null;
+    public Optional<Client> findById(int id) {
+        Optional<ClientEntity> optionalClient = clienteSpringRepository.findById(Integer.valueOf(id));
+        if (optionalClient.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return optionalClient.map(clientEntityMapper::entityToDomain);
     }
 
 
