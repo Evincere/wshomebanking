@@ -1,16 +1,13 @@
 package com.bbva.wshomebanking.presentation.controllers;
 
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
-import com.bbva.wshomebanking.application.usecases.cuenta.IAccountCreateUseCase;
-import com.bbva.wshomebanking.application.usecases.cuenta.IAccountSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase;
+import com.bbva.wshomebanking.application.usecases.account.IAccountSaveUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.infrastructure.mapper.AccountEntityMapper;
 import com.bbva.wshomebanking.presentation.mapper.AccountPresentationMapper;
-import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.request.cuenta.AccountCreateRequest;
 import com.bbva.wshomebanking.presentation.response.account.AccountResponse;
-import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

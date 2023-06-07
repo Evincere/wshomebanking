@@ -2,11 +2,10 @@ package com.bbva.wshomebanking.presentation.controllers;
 
 import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
-import com.bbva.wshomebanking.application.usecases.cuenta.IAccountCreateUseCase;
-import com.bbva.wshomebanking.application.usecases.cuenta.IAccountSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase;
+import com.bbva.wshomebanking.application.usecases.account.IAccountSaveUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.domain.models.enums.Currency;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
