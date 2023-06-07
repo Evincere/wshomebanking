@@ -10,11 +10,13 @@ import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
 import com.bbva.wshomebanking.infrastructure.mapper.AccountEntityMapper;
 import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
+import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
     private final AccountEntityMapper accountEntityMapper;
     private final ClientEntityMapper clientEntityMapper;
     private final IAccountSpringRepository accountSpringRepository;
-    private final IClientAccountRepository clientAccountRepository;
+    public final IClientAccountSpringRepository clientAccountSpringRepository;
 
     @Override
     public Account saveAccount(Account account) {
@@ -36,9 +38,19 @@ public class AccountRepositoryImpl implements IAccountRepository {
         clientAccountEntity.setHolderType("TITULAR");
 
         accountEntity = accountSpringRepository.save(accountEntity);
-        clientAccountRepository.save(clientAccountEntity);
+        clientAccountSpringRepository.save(clientAccountEntity);
 
 
         return accountEntityMapper.entityToDomain(accountEntity);
+    }
+
+    @Override
+    public Optional<Account> findById(int id) {
+        Optional<AccountEntity> optionalAccount = accountSpringRepository.findById(Integer.valueOf(id));
+        if (optionalAccount.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return optionalAccount.map(accountEntityMapper::entityToDomain);
     }
 }

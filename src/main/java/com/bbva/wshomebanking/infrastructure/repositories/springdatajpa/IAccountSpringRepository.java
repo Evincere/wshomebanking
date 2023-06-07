@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface IAccountSpringRepository extends JpaRepository<AccountEntity, UUID> {
+public interface IAccountSpringRepository extends JpaRepository<AccountEntity, Integer> {
 
 }

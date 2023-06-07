@@ -11,6 +11,7 @@ import com.bbva.wshomebanking.infrastructure.entities.AccountEntity;
 import com.bbva.wshomebanking.infrastructure.mapper.AccountEntityMapper;
 import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
+import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientSpringRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -26,7 +27,7 @@ public class ClientRepositoryImpl implements IClientRepository {
 
     private final IClientSpringRepository clienteSpringRepository;
     private final IAccountSpringRepository accountSpringRepository;
-    private final IClientAccountRepository clientAccountRepository;
+    private final IClientAccountSpringRepository clientAccountSpringRepository;
     private final ClientEntityMapper clientEntityMapper;
     private final AccountEntityMapper accountEntityMapper;
 
@@ -47,7 +48,7 @@ public class ClientRepositoryImpl implements IClientRepository {
 
         clienteSpringRepository.save(clientEntity);
         accountSpringRepository.save(accountEntity);
-        clientAccountRepository.save(clientAccountEntity);
+        clientAccountSpringRepository.save(clientAccountEntity);
 
 
         return clientEntityMapper.entityToDomain(clientEntity);
