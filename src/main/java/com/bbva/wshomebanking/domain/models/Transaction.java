@@ -1,9 +1,6 @@
 package com.bbva.wshomebanking.domain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,10 +9,13 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Transaction {
-    private Account account;
-    private Client cliente;
+    private int id;
     private BigDecimal importe;
     private LocalDate fechaOperacion;
+    private String accountToCBU;
+    private String transactionType;
+    private ClientAccount clientAccount;
 
 }

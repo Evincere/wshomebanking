@@ -2,8 +2,7 @@ package com.bbva.wshomebanking.infrastructure.entities;
 
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,6 +10,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(name = "Transactions")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +26,12 @@ public class TransactionEntity {
 
     @Column(name = "transaction_type")
     private String transactionType;
+
+    @Column(name = "account_to")
+    private String accountTo;
+
+    @Column(name = "amount")
+    private BigDecimal amount;
 
     // Omitted getters and setters
 
