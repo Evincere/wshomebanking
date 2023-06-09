@@ -29,6 +29,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
 
     @Override
     public Account saveAccount(Account account) {
+        /*
         AccountEntity accountEntity = accountEntityMapper.domainToEntity(account);
         ClientEntity clientEntity = clientEntityMapper.domainToEntity(account.getClients().get(0));
         ClientAccountEntity clientAccountEntity = new ClientAccountEntity();
@@ -42,6 +43,9 @@ public class AccountRepositoryImpl implements IAccountRepository {
 
 
         return accountEntityMapper.entityToDomain(accountEntity);
+
+         */
+        return null;
     }
 
     @Override

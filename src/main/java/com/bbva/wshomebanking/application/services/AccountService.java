@@ -21,7 +21,8 @@ public class AccountService implements IAccountCreateUseCase, IAccountSaveUseCas
 
     @Override
     public Account create(Client client, String currency) {
-        return accountMapper.clientAndCurrencyToDomain(client, currency);
+        //return accountMapper.clientAndCurrencyToDomain(client, currency);
+        return null;
     }
 
     @Override

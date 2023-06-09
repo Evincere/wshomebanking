@@ -19,6 +19,6 @@ public class Client {
     private String email;
     private String address;
     private String phone;
-    private List<Account> accounts;
+    private List<ClientAccount> accounts;
 
 }

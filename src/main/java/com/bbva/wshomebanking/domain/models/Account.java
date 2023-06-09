@@ -16,6 +16,6 @@ public class Account {
     private int id;
     private BigDecimal balance;
     private String currency;
-    private List<Client> clients;
+    private List<ClientAccount> clients;
 
 }

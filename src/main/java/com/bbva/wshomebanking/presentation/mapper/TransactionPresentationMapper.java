@@ -1,10 +1,7 @@
 package com.bbva.wshomebanking.presentation.mapper;
 
-import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.Transaction;
-import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.request.transaction.TransactionCreateRequest;
-import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -4,12 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Builder
 @Getter
 @Setter
-public class ClientResponse {
+public class ClientCreateResponse {
 
     private int id;
     private String personalId;

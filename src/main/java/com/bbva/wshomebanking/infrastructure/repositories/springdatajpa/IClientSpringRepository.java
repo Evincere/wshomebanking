@@ -10,7 +10,6 @@ public interface IClientSpringRepository extends JpaRepository<ClientEntity, Int
 
     boolean existsByEmail(String email);
 
-    /*boolean existsByEmailAndLastName(String email,
-                                     String apellido);*/
+    boolean existsByPersonalId(String personalId);
 
 }

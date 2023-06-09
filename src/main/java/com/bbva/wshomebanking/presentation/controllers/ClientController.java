@@ -8,8 +8,10 @@ import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
-import com.bbva.wshomebanking.presentation.response.client.ClientResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
+import com.bbva.wshomebanking.utilities.AppConstants;
+import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,27 +32,25 @@ import java.util.stream.Collectors;
 public class ClientController {
 
     private final IClientCreateUseCase clientCreateUseCase;
-    private final IClientSaveUseCase clienteSaveUseCase;
     private final IAccountCreateUseCase accountCreateUseCase;
     private final IAccountSaveUseCase accountSaveUseCase;
     private final ClientPresentationMapper clientMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> create(@Valid @RequestBody ClientCreateRequest request, BindingResult bindingResult) {
+
         ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
         if (errorResponse != null) {
             return errorResponse;
         }
 
-        String defaultCurrency = "ARS";
+        try {
+            ClientCreateResponse client = clientCreateUseCase.create(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(client);
 
-        Client client = clientCreateUseCase.create(request);
-        Account account = accountCreateUseCase.create(client, defaultCurrency);
-
-        Client savedClient = clienteSaveUseCase.save(client, account);
-
-        ClientResponse response = clientMapper.domainToResponse(savedClient);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
     }
 
     private static ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(BindingResult bindingResult) {

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class ClientEntityMapper {
 
     public ClientEntity domainToEntity(Client cliente) {
+
         return ClientEntity.builder()
                 .id(cliente.getId())
                 .personalId(cliente.getPersonalId())

@@ -9,13 +9,14 @@ import java.util.UUID;
 
 public interface IClientRepository {
 
-    Client saveCliente(Client cliente, Account account);
+    Client saveClient(Client cliente);
 
     List<Client> getAll();
 
     Optional<Client> findById(int id);
 
     boolean existsByEmail(String email);
+    boolean existsByPersonalId(String personalId);
 
     Client update(Client client);
 
