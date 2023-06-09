@@ -14,20 +14,20 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ClientAccountEntityMapper {
 
-    private final ClientEntityMapper clientEntityMapper;
-    private final AccountEntityMapper accountEntityMapper;
+    //private final ClientEntityMapper clientEntityMapper;
+    //private final AccountEntityMapper accountEntityMapper;
     public ClientAccount entityToDomain(ClientAccountEntity clientAccountEntity) {
         /*
         ClientAccount clientAccount = new ClientAccount();
 
-        clientAccount.setCliente(clientEntityMapper.entityToDomain(clientAccountEntity.getClient()));
+        clientAccount.setClient(clientAccountEntity.entityToDomain(clientAccountEntity.getClient()));
         clientAccount.setAccount(accountEntityMapper.entityToDomain(clientAccountEntity.getAccount()));
         clientAccount.setAccountHolderType(clientAccountEntity.getHolderType());
 
         return clientAccount;
+        */
 
-         */
-        return null;
+         return null;
     }
 
     public ClientAccountEntity domainToEntity(ClientAccount clientAccount) {

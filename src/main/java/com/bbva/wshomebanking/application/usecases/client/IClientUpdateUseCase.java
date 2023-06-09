@@ -1,13 +1,13 @@
 package com.bbva.wshomebanking.application.usecases.client;
 
 import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 
-public interface IClientCreateUseCase {
+public interface IClientUpdateUseCase {
 
-    ClientCreateResponse create(ClientCreateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException;
+    public ClientCreateResponse update(ClientUpdateRequest client) throws ExistingPersonalIdException, ErrorWhenSavingException;
 
 }

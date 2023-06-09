@@ -1,13 +1,17 @@
 package com.bbva.wshomebanking.presentation.controllers;
 
 import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IClientUpdateUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
+import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,8 +37,8 @@ import java.util.stream.Collectors;
 public class ClientController {
 
     private final IClientCreateUseCase clientCreateUseCase;
-    private final IAccountCreateUseCase accountCreateUseCase;
-    private final IAccountSaveUseCase accountSaveUseCase;
+    private final IClientUpdateUseCase clientUpdateUseCase;
+    private final IClientFindByUseCase clientFindByUseCase;
     private final ClientPresentationMapper clientMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
@@ -47,6 +52,42 @@ public class ClientController {
         try {
             ClientCreateResponse client = clientCreateUseCase.create(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(client);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> update(@Valid @RequestBody ClientUpdateRequest request, BindingResult bindingResult) {
+        ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            ClientCreateResponse client = clientUpdateUseCase.update(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(client);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping(value = "/find", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> update(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
+
+        try {
+            Optional<Client> client = null;
+
+            if(request.getId() != 0 )
+                client = clientFindByUseCase.findById(request.getId());
+            else if (!request.getPersonalId().equals(""))
+                client = clientFindByUseCase.findByPersonalId(request.getPersonalId());
+
+            if(client == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Cliente no encontrado", null));
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(clientMapper.findOneToResponse(client.get()));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));

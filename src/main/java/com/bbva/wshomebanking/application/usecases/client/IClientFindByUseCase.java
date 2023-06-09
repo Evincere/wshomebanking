@@ -11,4 +11,6 @@ public interface IClientFindByUseCase {
 
     Optional<Client> findById(int id);
 
+    Optional<Client> findByPersonalId(String personalId);
+
 }

@@ -15,6 +15,7 @@ import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientSpringRepository;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -36,49 +37,46 @@ public class ClientRepositoryImpl implements IClientRepository {
 
 
     @Override
-    public Client saveClient(Client client) {
+    public Client saveClient(Client client) throws ErrorWhenSavingException {
 
-        ClientEntity clientEntity = clientEntityMapper.domainToEntity(client);
-        ClientEntity savedClient = clienteSpringRepository.save(clientEntity);
+        try {
+            // save the client
+            ClientEntity clientEntity = clientEntityMapper.domainToEntity(client);
+            ClientEntity savedClient = clienteSpringRepository.save(clientEntity);
+            // save the account
+            AccountEntity accountEntity = accountEntityMapper.domainToEntity(client.getAccounts().get(0).getAccount());
+            AccountEntity savedAccount = accountSpringRepository.save(accountEntity);
+            // save the relationship
+            ClientAccountEntity clientAccountEntity = ClientAccountEntity.builder()
+                    .id(new ClientAccountId(savedAccount.getId(),savedClient.getId()))
+                    .client(savedClient)
+                    .account(savedAccount)
+                    .holderType(client.getAccounts().get(0).getAccountHolderType())
+                    .build();
+            clientAccountSpringRepository.save(clientAccountEntity);
 
-        AccountEntity accountEntity = accountEntityMapper.domainToEntity(client.getAccounts().get(0).getAccount());
-        AccountEntity savedAccount = accountSpringRepository.save(accountEntity);
+            // set the relationship to the client
+            List<ClientAccountEntity> clientAccountEntityList = new ArrayList<ClientAccountEntity>();
+            clientAccountEntityList.add(clientAccountEntity);
+            savedClient.setClientAccounts(clientAccountEntityList);
 
-        ClientAccountEntity clientAccountEntity = ClientAccountEntity.builder()
-                .id(new ClientAccountId(savedAccount.getId(), savedClient.getId()))
-                .client(savedClient)
-                .account(savedAccount)
-                .holderType(client.getAccounts().get(0).getAccountHolderType())
-                .build();
+            return clientEntityMapper.entityToDomain(savedClient);
 
-        clientAccountSpringRepository.save(clientAccountEntity);
+        } catch(Exception e) {
+            throw new ErrorWhenSavingException("No se pudo guardar el cliente");
+        }
 
-        return null;
     }
-    /*public Client saveCliente(Client cliente, Account account) {
-        ClientEntity clientEntity = clientEntityMapper.domainToEntity(cliente);
-        AccountEntity accountEntity = accountEntityMapper.domainToEntity(account);
-
-        ClientAccountEntity clientAccountEntity = new ClientAccountEntity();
-        clientAccountEntity.setClient(clientEntity);
-        clientAccountEntity.setAccount(accountEntity);
-        clientAccountEntity.setHolderType("TITULAR");
-        ClientAccountId clientAccountId = new ClientAccountId();
-        clientAccountId.setClientId(cliente.getId());
-        clientAccountId.setAccountId(account.getId());
-        clientAccountEntity.setId(clientAccountId);
-
-        clienteSpringRepository.save(clientEntity);
-        accountSpringRepository.save(accountEntity);
-        clientAccountSpringRepository.save(clientAccountEntity);
-
-
-        return clientEntityMapper.entityToDomain(clientEntity);
-    }*/
 
     @Override
-    public boolean existsByEmail(String email) {
-        return clienteSpringRepository.existsByEmail(email);
+    public Client updateClient(Client client) throws ErrorWhenSavingException {
+        try {
+            ClientEntity clientEntity = clientEntityMapper.domainToEntity(client);
+            ClientEntity savedClient = clienteSpringRepository.save(clientEntity);
+            return clientEntityMapper.entityToDomain(savedClient);
+        } catch (Exception e) {
+            throw new ErrorWhenSavingException("No se pudo guardar el cliente");
+        }
     }
 
     @Override
@@ -99,10 +97,15 @@ public class ClientRepositoryImpl implements IClientRepository {
         return optionalClient.map(clientEntityMapper::entityToDomain);
     }
 
-
-
     @Override
-    public Client update(Client client) {
-        return null;
+    public Optional<Client> findByPersonalId(String personalId) {
+        Optional<ClientEntity> optionalClient = clienteSpringRepository.findByPersonalId(personalId);
+        if (optionalClient.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return optionalClient.map(clientEntityMapper::entityToDomain);
     }
+
+
 }

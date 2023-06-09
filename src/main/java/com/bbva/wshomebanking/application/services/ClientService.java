@@ -4,13 +4,16 @@ import com.bbva.wshomebanking.application.repository.IClientRepository;
 import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IClientUpdateUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,13 +25,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService implements IClientCreateUseCase, IClientFindByUseCase {
+public class ClientService implements IClientCreateUseCase, IClientFindByUseCase, IClientUpdateUseCase {
 
     private final IClientRepository clientRepository;
     private final ClientPresentationMapper clientMapper;
 
     @Override
-    public ClientCreateResponse create(ClientCreateRequest request) throws ExistingPersonalIdException {
+    public ClientCreateResponse create(ClientCreateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException {
 
         // server side validations
         if (clientRepository.existsByPersonalId(request.getPersonalId())) {
@@ -56,15 +59,46 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
         client.setAccounts(clientAccountList);
         account.setClients(clientAccountList);
 
-        clientRepository.saveClient(client);
+        Client savedClient = clientRepository.saveClient(client);
 
 
         // response
-        return clientMapper.domainToResponse(client);
+        return clientMapper.domainToResponse(savedClient);
     }
 
     @Override
     public Optional<Client> findById(int id) {
         return clientRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Client> findByPersonalId(String personalId) {
+        return clientRepository.findByPersonalId(personalId);
+    }
+
+
+    @Override
+    public ClientCreateResponse update(ClientUpdateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException {
+
+        // server side validations
+        if (clientRepository.existsByPersonalId(request.getPersonalId())) {
+            Optional<Client> clientByPersonalId = clientRepository.findByPersonalId(request.getPersonalId());
+            if(request.getId() != clientByPersonalId.get().getId())
+                throw new ExistingPersonalIdException("DNI ya registrado");
+        }
+
+        Optional<Client> curretClient = clientRepository.findById(request.getId());
+        if(curretClient.isPresent()) {
+            curretClient.get().setPersonalId(request.getPersonalId());
+            curretClient.get().setLastName(request.getLastName());
+            curretClient.get().setFirstName(request.getFirstName());
+            curretClient.get().setEmail(request.getEmail());
+            curretClient.get().setPhone(request.getPhone());
+            curretClient.get().setAddress(request.getAddress());
+        }
+
+        Client savedClient = clientRepository.updateClient(curretClient.get());
+
+        return clientMapper.domainToResponse(savedClient);
     }
 }

@@ -1,9 +1,15 @@
 package com.bbva.wshomebanking.presentation.mapper;
 
+import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ClientPresentationMapper {
@@ -17,6 +23,7 @@ public class ClientPresentationMapper {
                 .email(client.getEmail())
                 .phone(client.getPhone())
                 .address(client.getAddress())
+                //.account(client.getAccounts().get(0).getAccount())
                 .build();
     }
 
@@ -29,6 +36,32 @@ public class ClientPresentationMapper {
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .build();
+    }
+
+    public ClientFindResponse findOneToResponse(Client client) {
+
+        List<Account> accountList = new ArrayList<>();
+        List<ClientAccount> clientAccountList = client.getAccounts();
+
+        for (ClientAccount clientAccount :
+                clientAccountList) {
+            Account account = clientAccount.getAccount();
+            account.setClients(null);
+            accountList.add(account);
+        }
+
+        return ClientFindResponse.builder()
+                .id(client.getId())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+                .personalId(client.getPersonalId())
+                .phone(client.getPhone())
+                .email(client.getEmail())
+                .address(client.getAddress())
+                .accountList(accountList)
+                .build();
+
+
     }
 
 
