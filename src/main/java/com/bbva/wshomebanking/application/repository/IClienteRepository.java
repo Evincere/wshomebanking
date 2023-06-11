@@ -15,6 +15,6 @@ public interface IClienteRepository {
 
     boolean existsByEmail(String email);
 
-    boolean existsByEmailAndLastName(String email, String lastName);
+    boolean existsByEmailAndApellido(String email, String apellido);
 
 }
