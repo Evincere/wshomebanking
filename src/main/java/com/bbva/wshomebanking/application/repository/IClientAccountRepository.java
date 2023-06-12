@@ -11,6 +11,6 @@ import java.util.UUID;
 
 public interface IClientAccountRepository {
 
-    ClientAccount saveClientAccount(Client cliente, Account account, String holderType);
+    ClientAccount relateClientToAccount(int clientId, int accountId, String holderType);
 
 }

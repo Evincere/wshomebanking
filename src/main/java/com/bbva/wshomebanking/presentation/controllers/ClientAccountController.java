@@ -3,6 +3,7 @@ package com.bbva.wshomebanking.presentation.controllers;
 import com.bbva.wshomebanking.application.repository.IClientAccountRepository;
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
+import com.bbva.wshomebanking.application.usecases.clientaccount.IRelateClientAccountUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
@@ -30,9 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClientAccountController {
 
-    private final IClientFindByUseCase clientFindByUseCase;
-    private final IAccountFindByUseCase accountFindByUseCase;
-    private final IClientAccountRepository clientAccountRepository;
+    private final IRelateClientAccountUseCase relateClientToAccount;
     private final ClientAccountPresentationMapper clientAccountPresentationMapper;
 
     @PostMapping(value = "/relate", consumes = "application/json", produces = "application/json")
@@ -42,13 +41,9 @@ public class ClientAccountController {
             return errorResponse;
         }
 
-        Optional<Client> client = clientFindByUseCase.findById(request.getClientId());
-        Optional<Account> account = accountFindByUseCase.findById(request.getAccountId());
+        ClientAccount clientAccount = relateClientToAccount.relate(request);
 
-        ClientAccount savedClientAccount = clientAccountRepository.saveClientAccount(client.get(), account.get(), request.getHolderType());
-
-        ClientAccountResponse response = clientAccountPresentationMapper.domainToResponse(savedClientAccount);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clientAccount);
     }
 
 

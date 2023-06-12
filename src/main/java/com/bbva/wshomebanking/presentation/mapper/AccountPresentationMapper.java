@@ -2,12 +2,16 @@ package com.bbva.wshomebanking.presentation.mapper;
 
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.presentation.request.cuenta.AccountCreateRequest;
+import com.bbva.wshomebanking.domain.models.ClientAccount;
+import com.bbva.wshomebanking.presentation.request.account.AccountCreateRequest;
+import com.bbva.wshomebanking.presentation.response.account.AccountFindResponse;
 import com.bbva.wshomebanking.presentation.response.account.AccountResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class AccountPresentationMapper {
@@ -24,6 +28,25 @@ public class AccountPresentationMapper {
         return Account.builder()
                 .currency(request.getCurrency())
                 .balance(BigDecimal.ZERO)
+                .build();
+    }
+
+    public AccountFindResponse findOneToResponse(Account account) {
+        List<Client> clientList = new ArrayList<>();
+        List<ClientAccount> clientAccountList = account.getClients();
+
+        for (ClientAccount clientAccount :
+                clientAccountList) {
+            Client client = clientAccount.getClient();
+            client.setAccounts(null);
+            clientList.add(client);
+        }
+
+        return AccountFindResponse.builder()
+                .id(account.getId())
+                .balance(account.getBalance())
+                .clientList(clientList)
+                .currency(account.getCurrency())
                 .build();
     }
 

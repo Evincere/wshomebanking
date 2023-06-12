@@ -1,11 +1,8 @@
 package com.bbva.wshomebanking.presentation.controllers;
 
-import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
+import com.bbva.wshomebanking.application.usecases.client.*;
 import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountSaveUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientUpdateUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
@@ -13,6 +10,7 @@ import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +38,7 @@ public class ClientController {
     private final IClientCreateUseCase clientCreateUseCase;
     private final IClientUpdateUseCase clientUpdateUseCase;
     private final IClientFindByUseCase clientFindByUseCase;
+    private final IClientListUseCase clientListUseCase;
     private final ClientPresentationMapper clientMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
@@ -74,7 +74,7 @@ public class ClientController {
     }
 
     @PostMapping(value = "/find", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> update(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> find(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
 
         try {
             Optional<Client> client = null;
@@ -88,6 +88,30 @@ public class ClientController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Cliente no encontrado", null));
 
             return ResponseEntity.status(HttpStatus.FOUND).body(clientMapper.findOneToResponse(client.get()));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping(value = "/list", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> list(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
+
+        try {
+            List<Client> clientList = null;
+            List<ClientFindResponse> clientFindResponseList = new ArrayList<>();
+
+            clientList = clientListUseCase.getClientsList(request);
+
+            if(clientList == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de clientes", null));
+
+            for (Client client :
+                    clientList) {
+                clientFindResponseList.add(clientMapper.findOneToResponse(client));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(clientFindResponseList);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));

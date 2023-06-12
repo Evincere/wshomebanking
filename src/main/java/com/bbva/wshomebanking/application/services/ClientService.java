@@ -1,17 +1,16 @@
 package com.bbva.wshomebanking.application.services;
 
 import com.bbva.wshomebanking.application.repository.IClientRepository;
-import com.bbva.wshomebanking.application.usecases.client.IClientCreateUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientSaveUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientUpdateUseCase;
+import com.bbva.wshomebanking.application.usecases.client.*;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
+import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
@@ -25,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService implements IClientCreateUseCase, IClientFindByUseCase, IClientUpdateUseCase {
+public class ClientService implements IClientCreateUseCase, IClientFindByUseCase, IClientUpdateUseCase, IClientListUseCase {
 
     private final IClientRepository clientRepository;
     private final ClientPresentationMapper clientMapper;
@@ -76,7 +75,6 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
         return clientRepository.findByPersonalId(personalId);
     }
 
-
     @Override
     public ClientCreateResponse update(ClientUpdateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException {
 
@@ -100,5 +98,10 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
         Client savedClient = clientRepository.updateClient(curretClient.get());
 
         return clientMapper.domainToResponse(savedClient);
+    }
+
+    @Override
+    public List<Client> getClientsList(ClientFindRequest request) {
+        return clientRepository.findByAll(request);
     }
 }

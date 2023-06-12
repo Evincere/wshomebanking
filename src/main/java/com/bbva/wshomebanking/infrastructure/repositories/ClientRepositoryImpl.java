@@ -15,6 +15,8 @@ import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientSpringRepository;
+import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -95,6 +97,21 @@ public class ClientRepositoryImpl implements IClientRepository {
         }
 
         return optionalClient.map(clientEntityMapper::entityToDomain);
+    }
+
+    @Override
+    public List<Client> findByAll(ClientFindRequest filters) {
+        List<ClientEntity> clientEntityList = new ArrayList<>();
+        List<Client> clientResponseList = new ArrayList<>();
+
+        clientEntityList = clienteSpringRepository.findAll();
+
+        for (ClientEntity entity :
+                clientEntityList) {
+            clientResponseList.add(clientEntityMapper.entityToDomain(entity));
+        }
+
+        return clientResponseList;
     }
 
     @Override

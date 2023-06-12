@@ -2,6 +2,7 @@ package com.bbva.wshomebanking.infrastructure.mapper;
 
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.infrastructure.entities.AccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
@@ -30,6 +31,25 @@ public class AccountEntityMapper {
         account.setId(accountEntity.getId());
         account.setCurrency(accountEntity.getCurrency());
         account.setBalance(accountEntity.getBalance());
+        List<ClientAccount> clientAccountList = new ArrayList<>();
+        for (ClientAccountEntity clientAccountEntity : accountEntity.getClientAccounts()) {
+            ClientEntity clientEntity = clientAccountEntity.getClient();
+            Client client = new Client(
+                    clientEntity.getId(),
+                    clientEntity.getPersonalId(),
+                    clientEntity.getFirstName(),
+                    clientEntity.getLastName(),
+                    clientEntity.getEmail(),
+                    clientEntity.getAddress(),
+                    clientEntity.getPhone(),
+                    null
+
+            );
+            clientAccountList.add(
+                    new ClientAccount(client,account,clientAccountEntity.getHolderType())
+            );
+        }
+        account.setClients(clientAccountList);
 
         return account;
     }

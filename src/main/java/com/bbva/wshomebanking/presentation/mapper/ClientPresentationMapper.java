@@ -19,7 +19,7 @@ public class ClientPresentationMapper {
                 .id(client.getId())
                 .personalId(client.getPersonalId())
                 .firstName(client.getFirstName())
-                .lastName(client.getFirstName())
+                .lastName(client.getLastName())
                 .email(client.getEmail())
                 .phone(client.getPhone())
                 .address(client.getAddress())

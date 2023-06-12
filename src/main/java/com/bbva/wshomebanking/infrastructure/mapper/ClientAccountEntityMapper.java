@@ -1,5 +1,6 @@
 package com.bbva.wshomebanking.infrastructure.mapper;
 
+import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
@@ -14,20 +15,29 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ClientAccountEntityMapper {
 
-    //private final ClientEntityMapper clientEntityMapper;
-    //private final AccountEntityMapper accountEntityMapper;
     public ClientAccount entityToDomain(ClientAccountEntity clientAccountEntity) {
-        /*
         ClientAccount clientAccount = new ClientAccount();
 
-        clientAccount.setClient(clientAccountEntity.entityToDomain(clientAccountEntity.getClient()));
-        clientAccount.setAccount(accountEntityMapper.entityToDomain(clientAccountEntity.getAccount()));
+        clientAccount.setClient(new Client(
+                clientAccountEntity.getClient().getId(),
+                clientAccountEntity.getClient().getPersonalId(),
+                clientAccountEntity.getClient().getFirstName(),
+                clientAccountEntity.getClient().getLastName(),
+                clientAccountEntity.getClient().getEmail(),
+                clientAccountEntity.getClient().getAddress(),
+                clientAccountEntity.getClient().getPhone(),
+                null
+        ));
+        clientAccount.setAccount(new Account(
+                clientAccountEntity.getAccount().getId(),
+                clientAccountEntity.getAccount().getBalance(),
+                clientAccountEntity.getAccount().getCurrency(),
+                null
+        ));
         clientAccount.setAccountHolderType(clientAccountEntity.getHolderType());
 
         return clientAccount;
-        */
 
-         return null;
     }
 
     public ClientAccountEntity domainToEntity(ClientAccount clientAccount) {

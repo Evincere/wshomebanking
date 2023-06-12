@@ -1,7 +1,6 @@
-package com.bbva.wshomebanking.presentation.request.cuenta;
+package com.bbva.wshomebanking.presentation.request.account;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 

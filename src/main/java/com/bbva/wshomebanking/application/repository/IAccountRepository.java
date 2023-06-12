@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IAccountRepository {
 
-    Account saveAccount(Account account);
+    Account create(Account account, Client client);
     Optional<Account> findById(int id);
 
 }

@@ -5,6 +5,6 @@ import com.bbva.wshomebanking.domain.models.Client;
 
 public interface IAccountCreateUseCase {
 
-    public Account create(Client client, String currency);
+    public Account create(int clientId, String currency);
 
 }

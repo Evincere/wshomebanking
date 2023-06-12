@@ -2,6 +2,8 @@ package com.bbva.wshomebanking.application.repository;
 
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
+import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public interface IClientRepository {
     List<Client> getAll();
 
     Optional<Client> findById(int id);
+    List<Client> findByAll(ClientFindRequest filters);
     Optional<Client> findByPersonalId(String personalId);
 
     boolean existsByPersonalId(String personalId);
