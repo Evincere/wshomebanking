@@ -1,6 +1,6 @@
 package com.bbva.wshomebanking.presentation.mapper;
 
-import com.bbva.wshomebanking.domain.models.Transaction;
+import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.presentation.request.transaction.TransactionCreateRequest;
 import org.springframework.stereotype.Component;
 

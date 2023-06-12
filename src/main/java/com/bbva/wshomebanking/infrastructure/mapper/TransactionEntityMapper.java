@@ -1,9 +1,7 @@
 package com.bbva.wshomebanking.infrastructure.mapper;
 
 import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.domain.models.ClientAccount;
-import com.bbva.wshomebanking.domain.models.Transaction;
-import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
+import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
 import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
