@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
+<<<<<<< HEAD
 @Repository
 public interface IClientSpringRepository extends JpaRepository<ClientEntity, Integer> {
 
@@ -13,5 +14,15 @@ public interface IClientSpringRepository extends JpaRepository<ClientEntity, Int
 
     boolean existsByPersonalId(String personalId);
     Optional<ClientEntity> findByPersonalId(String personalId);
+=======
+
+@Repository
+public interface IClientSpringRepository extends JpaRepository<ClienteEntity, UUID> {
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndApellido(String email,
+                                     String apellido);
+>>>>>>> 9358e373160844dbb48e41604909835855ab803c
 
 }
