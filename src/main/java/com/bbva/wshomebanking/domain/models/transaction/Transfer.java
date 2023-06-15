@@ -2,10 +2,10 @@ package com.bbva.wshomebanking.domain.models.transaction;
 
 public class Transfer extends Transaction {
 
-    private String accountTo;
-    @Override
-    public void validateTransaction() {
 
+    @Override
+    public boolean isValid() {
+        return false;
     }
 
     @Override

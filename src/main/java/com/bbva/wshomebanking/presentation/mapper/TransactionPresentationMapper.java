@@ -20,10 +20,10 @@ public class TransactionPresentationMapper {
     }*/
 
     public Transaction requestToDomain(TransactionCreateRequest request) {
-        return Transaction.builder()
-                .accountToCBU(request.getAccountTo())
+        /*return Transaction.builder()
+                .accountTo(request.getAccountTo())
                 .transactionType(request.getTransactionType())
-                .build();
+                .build();*/return null;
     }
 
 }

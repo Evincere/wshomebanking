@@ -7,10 +7,13 @@ import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface IClientAccountRepository {
 
     ClientAccount relateClientToAccount(int clientId, int accountId, String holderType);
+
+    ClientAccount get(int clientId, int account);
 
 }

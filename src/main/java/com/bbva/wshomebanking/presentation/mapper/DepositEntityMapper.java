@@ -1,19 +1,15 @@
-package com.bbva.wshomebanking.infrastructure.mapper;
+package com.bbva.wshomebanking.presentation.mapper;
 
 import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.domain.models.transaction.Deposit;
 import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.infrastructure.entities.ClientEntity;
 import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
-@Component()
-@RequiredArgsConstructor
-public class TransactionEntityMapper {
-
-    public TransactionEntity domainToEntity(Transaction transaction) {
+public class DepositEntityMapper {
+    public TransactionEntity domainToEntity(Deposit transaction) {
 
         return TransactionEntity.builder()
                 .id(transaction.getId())
@@ -35,5 +31,4 @@ public class TransactionEntityMapper {
 
         return cliente;
     }
-
 }
