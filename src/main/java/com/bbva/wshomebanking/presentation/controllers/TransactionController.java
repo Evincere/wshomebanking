@@ -2,16 +2,13 @@ package com.bbva.wshomebanking.presentation.controllers;
 
 import com.bbva.wshomebanking.application.repository.ITransactionRepository;
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
-import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
-import com.bbva.wshomebanking.domain.models.Account;
-import com.bbva.wshomebanking.domain.models.Client;
-import com.bbva.wshomebanking.domain.models.transaction.Transaction;
+import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
 import com.bbva.wshomebanking.presentation.mapper.ClientAccountPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
-import com.bbva.wshomebanking.presentation.request.transaction.TransactionCreateRequest;
+import com.bbva.wshomebanking.presentation.request.transaction.ExtractionRequest;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
-import com.bbva.wshomebanking.utilities.TransactionResult;
+import com.bbva.wshomebanking.utilities.TransactionResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,35 +29,34 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private final IDepositUseCase depositUseCase;
-    private final IAccountFindByUseCase accountFindByUseCase;
-    private final ITransactionRepository transactionRepository;
-    private final ClientAccountPresentationMapper clientAccountPresentationMapper;
+    private final IExtractUseCase extractUseCase;
+
     @PostMapping(value = "/deposit", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> deposit(@Valid @RequestBody DepositRequest request, BindingResult bindingResult) {
         ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
         if (errorResponse != null) {
             return errorResponse;
         }
+        try {
+            TransactionResponse result = depositUseCase.deposit(request);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
-        TransactionResult result = depositUseCase.deposit(request);
-
-        /*
-        Optional<Client> client = clientFindByUseCase.findById(request.getClientId());
-        Optional<Account> account = accountFindByUseCase.findById(request.getAccountId());
-
-        Transaction savedTransaction = transactionRepository.saveTransaction(
-                client.get(),
-                account.get(),
-                request.getTransactionType(),
-                request.getAmount()
-        );
-
-        //ClientAccountResponse response = clientAccountPresentationMapper.domainToResponse(savedClientAccount);
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
-
-         */
-
-        return null;
+    @PostMapping(value = "/extraction", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> extraction(@Valid @RequestBody ExtractionRequest request, BindingResult bindingResult) {
+        ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            TransactionResponse result = extractUseCase.extract(request);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     private static ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(BindingResult bindingResult) {
@@ -75,5 +70,7 @@ public class TransactionController {
         }
         return null;
     }
+
+
 
 }

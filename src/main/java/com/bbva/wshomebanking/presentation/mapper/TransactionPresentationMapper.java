@@ -2,28 +2,19 @@ package com.bbva.wshomebanking.presentation.mapper;
 
 import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.presentation.request.transaction.TransactionCreateRequest;
+import com.bbva.wshomebanking.utilities.TransactionResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TransactionPresentationMapper {
 
-    /*public ClientResponse domainToResponse(Client client) {
-        return ClientResponse.builder()
-                .id(client.getId())
-                .personalId(client.getPersonalId())
-                .firstName(client.getFirstName())
-                .lastName(client.getFirstName())
-                .email(client.getEmail())
-                .phone(client.getPhone())
-                .address(client.getAddress())
+    public TransactionResponse domainToResponse(Transaction transaction) {
+        return TransactionResponse.builder()
+                .id(transaction.getId())
+                .transactionType(transaction.getTransactionType())
+                .accountFrom(transaction.getAccount().getAccount().getId())
+                .amount(transaction.getAmount())
                 .build();
-    }*/
-
-    public Transaction requestToDomain(TransactionCreateRequest request) {
-        /*return Transaction.builder()
-                .accountTo(request.getAccountTo())
-                .transactionType(request.getTransactionType())
-                .build();*/return null;
     }
 
 }

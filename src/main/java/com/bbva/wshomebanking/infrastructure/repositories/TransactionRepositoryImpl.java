@@ -1,10 +1,8 @@
 package com.bbva.wshomebanking.infrastructure.repositories;
 
 import com.bbva.wshomebanking.application.repository.ITransactionRepository;
-import com.bbva.wshomebanking.domain.models.Account;
-import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.transaction.Deposit;
-import com.bbva.wshomebanking.domain.models.transaction.Transaction;
+import com.bbva.wshomebanking.domain.models.transaction.Extraction;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountId;
 import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
@@ -13,10 +11,10 @@ import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.mapper.TransactionEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.ITransactionSpringRepository;
+import com.bbva.wshomebanking.utilities.exceptions.TransactionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @Repository
@@ -30,7 +28,7 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
     private final ITransactionSpringRepository transactionSpringRepository;
 
     @Override
-    public Transaction executeDeposit(Deposit deposit) {
+    public Deposit executeDeposit(Deposit deposit) throws TransactionException {
         try {
             Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
                     new ClientAccountId(
@@ -47,10 +45,35 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
                     .amount(deposit.getAmount())
                     .build();
 
-            transactionSpringRepository.save(transactionEntity);
+            transactionEntity = transactionSpringRepository.save(transactionEntity);
+            return transactionEntityMapper.depositEntityToDomain(transactionEntity);
         } catch (Exception e) {
-            return null;
+            throw new TransactionException("No se pudo realizar el deposito");
         }
-        return null;
+    }
+
+    @Override
+    public Extraction executeExtraction(Extraction extraction) throws TransactionException {
+        try {
+            Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
+                    new ClientAccountId(
+                            extraction.getAccount().getClient().getId(),
+                            extraction.getAccount().getAccount().getId()
+                    ));
+            clientAccountEntity.get().getAccount().setBalance(extraction.getAccount().getAccount().getBalance());
+
+            TransactionEntity transactionEntity = TransactionEntity.builder()
+                    .clientAccount(clientAccountEntity.get())
+                    .clientId(clientAccountEntity.get().getClient().getId())
+                    .accountId(clientAccountEntity.get().getAccount().getId())
+                    .transactionType(extraction.getTransactionType())
+                    .amount(extraction.getAmount())
+                    .build();
+
+            transactionEntity = transactionSpringRepository.save(transactionEntity);
+            return transactionEntityMapper.extractionEntityToDomain(transactionEntity);
+        } catch (Exception e) {
+            throw new TransactionException("No se pudo realizar el deposito");
+        }
     }
 }
