@@ -4,9 +4,11 @@ import com.bbva.wshomebanking.application.repository.ITransactionRepository;
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
+import com.bbva.wshomebanking.application.usecases.transaction.ITransferUseCase;
 import com.bbva.wshomebanking.presentation.mapper.ClientAccountPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
 import com.bbva.wshomebanking.presentation.request.transaction.ExtractionRequest;
+import com.bbva.wshomebanking.presentation.request.transaction.TransferRequest;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.TransactionResponse;
 import jakarta.validation.Valid;
@@ -30,6 +32,7 @@ public class TransactionController {
 
     private final IDepositUseCase depositUseCase;
     private final IExtractUseCase extractUseCase;
+    private final ITransferUseCase transferUseCase;
 
     @PostMapping(value = "/deposit", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> deposit(@Valid @RequestBody DepositRequest request, BindingResult bindingResult) {
@@ -53,6 +56,20 @@ public class TransactionController {
         }
         try {
             TransactionResponse result = extractUseCase.extract(request);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/transfer", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> transfer(@Valid @RequestBody TransferRequest request, BindingResult bindingResult) {
+        ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            TransactionResponse result = transferUseCase.transfer(request);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

@@ -6,6 +6,7 @@ import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.domain.models.transaction.Deposit;
 import com.bbva.wshomebanking.domain.models.transaction.Extraction;
 import com.bbva.wshomebanking.domain.models.transaction.Transaction;
+import com.bbva.wshomebanking.domain.models.transaction.Transfer;
 import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -65,6 +66,28 @@ public class TransactionEntityMapper {
         extraction.setAccount(clientAccount);
 
         return extraction;
+    }
+
+    public Transfer transferEntityToDomain(TransactionEntity transactionEntity) {
+        Transfer transfer = new Transfer();
+
+        Client client = new Client();
+        client.setId(transactionEntity.getClientId());
+
+        Account account = new Account();
+        account.setId(transactionEntity.getAccountId());
+
+        ClientAccount clientAccount = new ClientAccount();
+        clientAccount.setClient(client);
+        clientAccount.setAccount(account);
+        clientAccount.setAccountHolderType(transactionEntity.getClientAccount().getHolderType());
+
+        transfer.setId(transactionEntity.getId());
+        transfer.setAmount(transactionEntity.getAmount());
+        transfer.setTransactionType(transactionEntity.getTransactionType());
+        transfer.setAccount(clientAccount);
+
+        return transfer;
     }
 
 }

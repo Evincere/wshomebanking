@@ -3,6 +3,7 @@ package com.bbva.wshomebanking.infrastructure.repositories;
 import com.bbva.wshomebanking.application.repository.ITransactionRepository;
 import com.bbva.wshomebanking.domain.models.transaction.Deposit;
 import com.bbva.wshomebanking.domain.models.transaction.Extraction;
+import com.bbva.wshomebanking.domain.models.transaction.Transfer;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountId;
 import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
@@ -21,9 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionRepositoryImpl implements ITransactionRepository {
     private final TransactionEntityMapper transactionEntityMapper;
-    private final ClientEntityMapper clientEntityMapper;
-    private final AccountEntityMapper accountEntityMapper;
-    private final ITransactionSpringRepository transactionRepository;
     private final IClientAccountSpringRepository clientAccountSpringRepository;
     private final ITransactionSpringRepository transactionSpringRepository;
 
@@ -74,6 +72,31 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
             return transactionEntityMapper.extractionEntityToDomain(transactionEntity);
         } catch (Exception e) {
             throw new TransactionException("No se pudo realizar el deposito");
+        }
+    }
+
+    @Override
+    public Transfer executeTransfer(Transfer transfer) throws TransactionException {
+        try {
+            Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
+                    new ClientAccountId(
+                            transfer.getAccount().getClient().getId(),
+                            transfer.getAccount().getAccount().getId()
+                    ));
+            clientAccountEntity.get().getAccount().setBalance(transfer.getAccount().getAccount().getBalance());
+
+            TransactionEntity transactionEntity = TransactionEntity.builder()
+                    .clientAccount(clientAccountEntity.get())
+                    .clientId(clientAccountEntity.get().getClient().getId())
+                    .accountId(clientAccountEntity.get().getAccount().getId())
+                    .transactionType(transfer.getTransactionType())
+                    .amount(transfer.getAmount())
+                    .build();
+
+            transactionEntity = transactionSpringRepository.save(transactionEntity);
+            return transactionEntityMapper.transferEntityToDomain(transactionEntity);
+        } catch (Exception e) {
+            throw new TransactionException("No se pudo realizar la transferencia");
         }
     }
 }
