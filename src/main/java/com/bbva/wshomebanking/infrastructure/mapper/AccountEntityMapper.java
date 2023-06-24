@@ -42,8 +42,9 @@ public class AccountEntityMapper {
                     clientEntity.getEmail(),
                     clientEntity.getAddress(),
                     clientEntity.getPhone(),
+                    null,
+                    null,
                     null
-
             );
             clientAccountList.add(
                     new ClientAccount(client,account,clientAccountEntity.getHolderType())

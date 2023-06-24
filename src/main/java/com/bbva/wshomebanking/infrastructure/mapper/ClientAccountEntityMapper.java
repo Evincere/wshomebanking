@@ -26,6 +26,8 @@ public class ClientAccountEntityMapper {
                 clientAccountEntity.getClient().getEmail(),
                 clientAccountEntity.getClient().getAddress(),
                 clientAccountEntity.getClient().getPhone(),
+                null,
+                null,
                 null
         ));
         clientAccount.setAccount(new Account(

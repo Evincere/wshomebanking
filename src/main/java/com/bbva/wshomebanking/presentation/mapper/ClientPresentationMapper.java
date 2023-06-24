@@ -44,6 +44,7 @@ public class ClientPresentationMapper {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .address(request.getAddress())
+                .password(request.getPassword())
                 .build();
     }
 

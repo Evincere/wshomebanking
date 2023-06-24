@@ -29,6 +29,8 @@ public class ClientEntityMapper {
                 .phone(client.getPhone())
                 .address(client.getAddress())
                 .clientAccounts(new ArrayList<>())
+                .password(client.getPassword())
+                .salt(client.getSalt())
                 .build();
     }
 

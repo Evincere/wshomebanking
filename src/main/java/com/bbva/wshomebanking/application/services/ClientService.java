@@ -16,6 +16,7 @@ import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,8 +39,14 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
             throw new ExistingPersonalIdException(ErrorCodes.COULD_NOT_CREATE_CLIENT);
         }
 
+        // creo un salt y hasheo la contraseña
+        String salt = BCrypt.gensalt();
+        String hashedPassword = BCrypt.hashpw(request.getPassword(), salt);
+
         // Creo la entidad cliente con los datos que tengo
         Client client = clientMapper.requestToDomain(request);
+        client.setSalt(salt);
+        client.setPassword(hashedPassword);
 
         // Creo la cuenta por default que nos exige el negocio
         Account account = Account.builder()

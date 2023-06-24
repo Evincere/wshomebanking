@@ -23,6 +23,8 @@ public class Client {
     @JsonIgnore
     private String password;
     @JsonIgnore
+    private String salt;
+    @JsonIgnore
     private List<ClientAccount> accounts;
 
 }
