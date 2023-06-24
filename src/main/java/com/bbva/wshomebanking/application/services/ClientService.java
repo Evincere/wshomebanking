@@ -10,10 +10,11 @@ import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
-import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
+import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
 
         // server side validations
         if (clientRepository.existsByPersonalId(request.getPersonalId())) {
-            throw new ExistingPersonalIdException("DNI ya registrado");
+            throw new ExistingPersonalIdException(ErrorCodes.COULD_NOT_CREATE_CLIENT);
         }
 
         // Creo la entidad cliente con los datos que tengo
@@ -76,32 +77,40 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
     }
 
     @Override
-    public ClientCreateResponse update(ClientUpdateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException {
+    public ClientCreateResponse update(ClientUpdateRequest request) throws ExistingPersonalIdException, ErrorWhenSavingException, RecordNotFoundException {
+
+        Optional<Client> currentClient = clientRepository.findById(request.getId());
+        if(currentClient.isPresent()) {
+            currentClient.get().setPersonalId(request.getPersonalId());
+            currentClient.get().setLastName(request.getLastName());
+            currentClient.get().setFirstName(request.getFirstName());
+            currentClient.get().setEmail(request.getEmail());
+            currentClient.get().setPhone(request.getPhone());
+            currentClient.get().setAddress(request.getAddress());
+        } else {
+            throw new RecordNotFoundException(ErrorCodes.RECORD_NOT_FOUND);
+        }
+
 
         // server side validations
         if (clientRepository.existsByPersonalId(request.getPersonalId())) {
             Optional<Client> clientByPersonalId = clientRepository.findByPersonalId(request.getPersonalId());
             if(request.getId() != clientByPersonalId.get().getId())
-                throw new ExistingPersonalIdException("DNI ya registrado");
+                throw new ExistingPersonalIdException(ErrorCodes.COULD_NOT_UPDATE_CLIENT);
         }
 
-        Optional<Client> curretClient = clientRepository.findById(request.getId());
-        if(curretClient.isPresent()) {
-            curretClient.get().setPersonalId(request.getPersonalId());
-            curretClient.get().setLastName(request.getLastName());
-            curretClient.get().setFirstName(request.getFirstName());
-            curretClient.get().setEmail(request.getEmail());
-            curretClient.get().setPhone(request.getPhone());
-            curretClient.get().setAddress(request.getAddress());
-        }
 
-        Client savedClient = clientRepository.updateClient(curretClient.get());
+
+        Client savedClient = clientRepository.updateClient(currentClient.get());
+        for (ClientAccount clientAccount: currentClient.get().getAccounts()) {
+            savedClient.getAccounts().add(clientAccount);
+        }
 
         return clientMapper.domainToResponse(savedClient);
     }
 
     @Override
-    public List<Client> getClientsList(ClientFindRequest request) {
-        return clientRepository.findByAll(request);
+    public List<Client> getClientsList() {
+        return clientRepository.findAll();
     }
 }

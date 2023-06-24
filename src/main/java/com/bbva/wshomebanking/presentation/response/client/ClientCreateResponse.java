@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -17,5 +19,5 @@ public class ClientCreateResponse {
     private String email;
     private String phone;
     private String address;
-    private Account account;
+    private List<Account> accounts;
 }

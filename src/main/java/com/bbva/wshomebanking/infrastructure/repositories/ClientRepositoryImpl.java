@@ -17,6 +17,7 @@ import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientA
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientSpringRepository;
 import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -77,17 +78,12 @@ public class ClientRepositoryImpl implements IClientRepository {
             ClientEntity savedClient = clienteSpringRepository.save(clientEntity);
             return clientEntityMapper.entityToDomain(savedClient);
         } catch (Exception e) {
-            throw new ErrorWhenSavingException("No se pudo guardar el cliente");
+            throw new ErrorWhenSavingException(ErrorCodes.COULD_NOT_UPDATE_CLIENT);
         }
     }
 
     @Override
     public boolean existsByPersonalId(String personalId) { return clienteSpringRepository.existsByPersonalId(personalId); }
-
-    @Override
-    public List<Client> getAll() {
-        return null;
-    }
 
     @Override
     public Optional<Client> findById(int id) {
@@ -100,14 +96,13 @@ public class ClientRepositoryImpl implements IClientRepository {
     }
 
     @Override
-    public List<Client> findByAll(ClientFindRequest filters) {
+    public List<Client> findAll() {
         List<ClientEntity> clientEntityList = new ArrayList<>();
         List<Client> clientResponseList = new ArrayList<>();
 
         clientEntityList = clienteSpringRepository.findAll();
 
-        for (ClientEntity entity :
-                clientEntityList) {
+        for (ClientEntity entity : clientEntityList) {
             clientResponseList.add(clientEntityMapper.entityToDomain(entity));
         }
 

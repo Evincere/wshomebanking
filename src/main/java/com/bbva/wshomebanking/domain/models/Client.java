@@ -1,5 +1,6 @@
 package com.bbva.wshomebanking.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public class Client {
     private String email;
     private String address;
     private String phone;
+    @JsonIgnore
+    private String password;
+    @JsonIgnore
     private List<ClientAccount> accounts;
 
 }

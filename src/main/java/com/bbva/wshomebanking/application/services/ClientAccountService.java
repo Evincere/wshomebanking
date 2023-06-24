@@ -6,6 +6,9 @@ import com.bbva.wshomebanking.application.usecases.clientaccount.IRelateClientAc
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
 import com.bbva.wshomebanking.presentation.request.clientaccount.ClientAccountCreateRequest;
+import com.bbva.wshomebanking.utilities.exceptions.AccountNotFoundException;
+import com.bbva.wshomebanking.utilities.exceptions.ClientNotFoundException;
+import com.bbva.wshomebanking.utilities.exceptions.RelationshipNotCreatedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class ClientAccountService implements IRelateClientAccountUseCase, IGetClientAccountUseCase {
     private final IClientAccountRepository clientAccountRepository;
     @Override
-    public ClientAccount relate(ClientAccountCreateRequest request) {
+    public ClientAccount relate(ClientAccountCreateRequest request) throws ClientNotFoundException, RelationshipNotCreatedException, AccountNotFoundException {
         ClientAccount savedClientAccount = clientAccountRepository.relateClientToAccount(
                 request.getClientId(),
                 request.getAccountId(),

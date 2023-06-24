@@ -7,5 +7,5 @@ import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import java.util.List;
 
 public interface IClientListUseCase {
-    List<Client> getClientsList(ClientFindRequest filters);
+    List<Client> getClientsList();
 }

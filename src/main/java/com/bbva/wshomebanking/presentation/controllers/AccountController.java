@@ -9,6 +9,9 @@ import com.bbva.wshomebanking.presentation.mapper.AccountPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.account.AccountCreateRequest;
 import com.bbva.wshomebanking.presentation.request.account.AccountFindRequest;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
+import com.bbva.wshomebanking.utilities.ErrorDescriptions;
+import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,8 +43,19 @@ public class AccountController {
         if (errorResponse != null) {
             return errorResponse;
         }
-        Account savedAccount = accountCreateUseCase.create(request.getClientId(), request.getCurrency());
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountPresentationMapper.domainToResponse(savedAccount));
+        try {
+            Account savedAccount = accountCreateUseCase.create(request.getClientId(), request.getCurrency());
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountPresentationMapper.domainToResponse(savedAccount));
+        } catch (RecordNotFoundException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+        } catch (Exception e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.ERROR_WHEN_SAVING_ACCOUNT);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+        }
+
     }
 
     @PostMapping(value = "/find", consumes = "application/json", produces = "application/json")
@@ -55,8 +70,11 @@ public class AccountController {
             if(request.getAccountId() != 0 )
                 account = accountFindByUseCase.findById(request.getAccountId());
 
-            if(account == null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Cliente no encontrado", null));
+            if(!account.isPresent()){
+                ArrayList<String> errors = new ArrayList<>();
+                errors.add(ErrorDescriptions.ACCOUNT_NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+            }
 
             return ResponseEntity.status(HttpStatus.FOUND).body(accountPresentationMapper.findOneToResponse(account.get()));
 
@@ -66,6 +84,9 @@ public class AccountController {
 
     }
 
+    //TODO: list accounts
+
+    //TODO: delete accounts
 
     private static ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

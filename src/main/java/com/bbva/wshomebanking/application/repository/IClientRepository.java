@@ -15,13 +15,9 @@ public interface IClientRepository {
     Client saveClient(Client cliente) throws ErrorWhenSavingException;
 
     Client updateClient(Client client) throws ErrorWhenSavingException;
-
-    List<Client> getAll();
-
+    List<Client> findAll();
     Optional<Client> findById(int id);
-    List<Client> findByAll(ClientFindRequest filters);
     Optional<Client> findByPersonalId(String personalId);
-
     boolean existsByPersonalId(String personalId);
 
 }

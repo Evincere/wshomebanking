@@ -15,6 +15,15 @@ import java.util.List;
 public class ClientPresentationMapper {
 
     public ClientCreateResponse domainToResponse(Client client) {
+
+        List<Account> accountList = new ArrayList<>();
+        for (ClientAccount clientAccount :
+                client.getAccounts()) {
+            Account account = clientAccount.getAccount();
+            account.setClients(null);
+            accountList.add(account);
+        }
+
         return ClientCreateResponse.builder()
                 .id(client.getId())
                 .personalId(client.getPersonalId())
@@ -23,7 +32,7 @@ public class ClientPresentationMapper {
                 .email(client.getEmail())
                 .phone(client.getPhone())
                 .address(client.getAddress())
-                //.account(client.getAccounts().get(0).getAccount())
+                .accounts(accountList)
                 .build();
     }
 

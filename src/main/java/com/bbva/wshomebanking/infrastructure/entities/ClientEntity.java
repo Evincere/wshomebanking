@@ -25,6 +25,7 @@ public class ClientEntity {
     private String email;
     private String address;
     private String phone;
+    private String password;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<ClientAccountEntity> clientAccounts;
 

@@ -1,6 +1,7 @@
 package com.bbva.wshomebanking.domain.models;
 
 import com.bbva.wshomebanking.domain.models.enums.Currency;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class Account {
     private int id;
     private BigDecimal balance;
     private String currency;
+    @JsonIgnore
     private List<ClientAccount> clients;
 
 }

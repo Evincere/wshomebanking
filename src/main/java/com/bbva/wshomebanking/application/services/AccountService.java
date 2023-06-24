@@ -7,6 +7,8 @@ import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.AccountPresentationMapper;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
+import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +24,20 @@ public class AccountService implements IAccountCreateUseCase, IAccountFindByUseC
     private final AccountPresentationMapper accountMapper;
 
     @Override
-    public Account create(int clientId,String currency) {
+    public Account create(int clientId,String currency) throws RecordNotFoundException {
         // get the client
-        Client client = clientFindByUseCase.findById(clientId).get();
+        Optional<Client> client = clientFindByUseCase.findById(clientId);
 
-        // create the account domain object
-        Account account = new Account();
-        account.setBalance(BigDecimal.ZERO);
-        account.setCurrency(currency);
+        if(client.isPresent()) {
+            Account account = new Account();
+            account.setBalance(BigDecimal.ZERO);
+            account.setCurrency(currency);
+            return accountRepository.create(account, client.get());
+        } else {
+            throw new RecordNotFoundException(ErrorCodes.RECORD_NOT_FOUND);
+        }
 
-        return accountRepository.create(account, client);
+
     }
 
     @Override

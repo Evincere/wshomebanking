@@ -11,6 +11,11 @@ import com.bbva.wshomebanking.presentation.mapper.ClientAccountPresentationMappe
 import com.bbva.wshomebanking.presentation.request.clientaccount.ClientAccountCreateRequest;
 import com.bbva.wshomebanking.presentation.response.clientaccount.ClientAccountResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
+import com.bbva.wshomebanking.utilities.ErrorDescriptions;
+import com.bbva.wshomebanking.utilities.exceptions.AccountNotFoundException;
+import com.bbva.wshomebanking.utilities.exceptions.ClientNotFoundException;
+import com.bbva.wshomebanking.utilities.exceptions.RelationshipNotCreatedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,10 +46,30 @@ public class ClientAccountController {
         if (errorResponse != null) {
             return errorResponse;
         }
+        try {
+            ClientAccount clientAccount = relateClientToAccount.relate(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(clientAccount);
 
-        ClientAccount clientAccount = relateClientToAccount.relate(request);
+        } catch (ClientNotFoundException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+        } catch (AccountNotFoundException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.ACCOUNT_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+        } catch (RelationshipNotCreatedException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.RELATIONSHIP_ACCOUNT_CLIENT_NOT_CREATED);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.COULD_NOT_RELATE_CLIENT_ACCOUNT, errors));
+        } catch (Exception e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+        }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(clientAccount);
+        //TODO: Intentar crear relacion ya existente
+
     }
 
 

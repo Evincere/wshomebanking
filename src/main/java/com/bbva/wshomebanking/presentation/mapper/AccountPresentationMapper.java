@@ -17,10 +17,16 @@ import java.util.List;
 public class AccountPresentationMapper {
 
     public AccountResponse domainToResponse(Account account) {
+        List<Client> clientList = new ArrayList<>();
+        for (ClientAccount clientAccount : account.getClients()) {
+            clientList.add(clientAccount.getClient());
+        }
+
         return AccountResponse.builder()
                 .accountNumber(account.getId())
                 .currency(account.getCurrency())
                 .balance(BigDecimal.ZERO)
+                .clients(clientList)
                 .build();
     }
 

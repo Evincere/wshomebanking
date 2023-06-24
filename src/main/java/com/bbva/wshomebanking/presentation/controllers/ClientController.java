@@ -13,17 +13,18 @@ import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
+import com.bbva.wshomebanking.utilities.ErrorDescriptions;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
+import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,17 +49,22 @@ public class ClientController {
         if (errorResponse != null) {
             return errorResponse;
         }
-
         try {
             ClientCreateResponse client = clientCreateUseCase.create(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(client);
 
-        } catch (Exception e) {
+        } catch (ExistingPersonalIdException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.EXISTING_PERSONAL_ID);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+        } catch (ErrorWhenSavingException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
         }
     }
 
-    @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
+    @PatchMapping(value = "/update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> update(@Valid @RequestBody ClientUpdateRequest request, BindingResult bindingResult) {
         ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
         if (errorResponse != null) {
@@ -66,26 +72,43 @@ public class ClientController {
         }
         try {
             ClientCreateResponse client = clientUpdateUseCase.update(request);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(client);
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        } catch (ExistingPersonalIdException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.EXISTING_PERSONAL_ID);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+        } catch (ErrorWhenSavingException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+        } catch (RecordNotFoundException e) {
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
         }
     }
 
-    @PostMapping(value = "/find", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/find", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> find(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
 
         try {
             Optional<Client> client = null;
 
+            // Search by ID
             if(request.getId() != 0 )
                 client = clientFindByUseCase.findById(request.getId());
+            // Search by PersonalId
             else if (!request.getPersonalId().equals(""))
                 client = clientFindByUseCase.findByPersonalId(request.getPersonalId());
 
-            if(client == null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Cliente no encontrado", null));
+            if(!client.isPresent()){
+                ArrayList<String> errors = new ArrayList<>();
+                errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+            }
+
 
             return ResponseEntity.status(HttpStatus.FOUND).body(clientMapper.findOneToResponse(client.get()));
 
@@ -94,14 +117,14 @@ public class ClientController {
         }
     }
 
-    @PostMapping(value = "/list", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> list(@Valid @RequestBody ClientFindRequest request, BindingResult bindingResult) {
+    @GetMapping(value = "/list", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> list() {
 
         try {
             List<Client> clientList = null;
             List<ClientFindResponse> clientFindResponseList = new ArrayList<>();
 
-            clientList = clientListUseCase.getClientsList(request);
+            clientList = clientListUseCase.getClientsList();
 
             if(clientList == null)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de clientes", null));
@@ -124,7 +147,7 @@ public class ClientController {
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
 
-            ErrorResponse errorResponse = new ErrorResponse("Error de validación", errors);
+            ErrorResponse errorResponse = new ErrorResponse(ErrorCodes.VALIDATION_ERROR, errors);
             return ResponseEntity.badRequest().body(errorResponse);
         }
         return null;

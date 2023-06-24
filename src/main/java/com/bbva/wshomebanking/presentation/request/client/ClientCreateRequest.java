@@ -27,4 +27,7 @@ public class ClientCreateRequest {
     @Size(max = 50, message = "La dirección no puede tener más de 50 caracteres")
     private String address;
 
+    @Size(min = 6, max = 30, message = "La contraseña debe tener al menos 6 caracteres")
+    private String password;
+
 }
