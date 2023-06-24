@@ -58,6 +58,8 @@ public class ClientEntityMapper {
             );
         }
         client.setAccounts(clientAccountList);
+        client.setSalt(clientEntity.getSalt());
+        client.setPassword(clientEntity.getPassword());
         return client;
     }
 
