@@ -1,7 +1,7 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
 import com.bbva.wshomebanking.domain.models.enums.AccountHolderType;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.util.List;

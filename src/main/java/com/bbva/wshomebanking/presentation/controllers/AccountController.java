@@ -12,7 +12,7 @@ import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.ErrorDescriptions;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
 import com.bbva.wshomebanking.domain.models.ClientAccount;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;

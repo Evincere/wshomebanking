@@ -1,7 +1,7 @@
 package com.bbva.wshomebanking.infrastructure.entities;
 
 import com.bbva.wshomebanking.domain.models.enums.Currency;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 

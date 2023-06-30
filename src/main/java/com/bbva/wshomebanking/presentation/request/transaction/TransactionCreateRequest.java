@@ -1,7 +1,7 @@
 package com.bbva.wshomebanking.presentation.request.transaction;
 
 import com.bbva.wshomebanking.infrastructure.entities.ClientAccountEntity;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 
 import java.math.BigDecimal;
