@@ -6,4 +6,5 @@ import lombok.Getter;
 public class ClientUpdateRequest extends ClientCreateRequest {
 
     private int id;
+    private String newPersonalId;
 }

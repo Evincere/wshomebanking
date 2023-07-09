@@ -12,21 +12,25 @@ import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
-import com.bbva.wshomebanking.utilities.AppConstants;
-import com.bbva.wshomebanking.utilities.ErrorCodes;
-import com.bbva.wshomebanking.utilities.ErrorDescriptions;
+import com.bbva.wshomebanking.utilities.*;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,22 +75,52 @@ public class ClientController {
             return errorResponse;
         }
         try {
-            ClientCreateResponse client = clientUpdateUseCase.update(request);
+            Client requestedClient = clientFindByUseCase.findByPersonalId(request.getPersonalId()).orElse(null);
+            Client authenticatedClient = clientFindByUseCase.findByPersonalId(ControllerUtils.getUserName()).orElse(null);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(client);
+            if(requestedClient == null)
+                throw new Exception(ErrorDescriptions.CLIENT_NOT_FOUND);
+
+            if(requestedClient.getId() != authenticatedClient.getId() || request.getId() != authenticatedClient.getId())
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+
+            if(ControllerUtils.isNotAdmin())
+                if(request.getNewPersonalId() != null && !request.getNewPersonalId().equals(authenticatedClient.getPersonalId()))
+                    throw new Exception(ErrorDescriptions.CANNOT_UPDATE_PERSONAL_ID);
+
+            ClientCreateResponse updatedClient = clientUpdateUseCase.update(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedClient);
 
         } catch (ExistingPersonalIdException e) {
-            ArrayList<String> errors = new ArrayList<>();
-            errors.add(ErrorDescriptions.EXISTING_PERSONAL_ID);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.EXISTING_PERSONAL_ID);
         } catch (ErrorWhenSavingException e) {
-            ArrayList<String> errors = new ArrayList<>();
-            errors.add(ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
         } catch (RecordNotFoundException e) {
-            ArrayList<String> errors = new ArrayList<>();
-            errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.CLIENT_NOT_FOUND);
+        } catch (Exception e ){
+            return ControllerUtils.getBadRequest(e, "");
+        }
+    }
+
+    @GetMapping(value = "/myprofile")
+    public ResponseEntity<?> myAccount() {
+
+        try {
+            Optional<Client> client = null;
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            client = clientFindByUseCase.findByPersonalId(username);
+
+            if(!client.isPresent()){
+                ArrayList<String> errors = new ArrayList<>();
+                errors.add(ErrorDescriptions.CLIENT_NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCodes.RECORD_NOT_FOUND, errors));
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(clientMapper.findOneToResponse(client.get()));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
         }
     }
 
@@ -117,7 +151,7 @@ public class ClientController {
         }
     }
 
-    @GetMapping(value = "/list", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/list", produces = "application/json")
     public ResponseEntity<?> list() {
 
         try {
@@ -152,5 +186,7 @@ public class ClientController {
         }
         return null;
     }
+
+
 
 }

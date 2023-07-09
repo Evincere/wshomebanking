@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.User;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -27,16 +29,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Client> client = clientRepository.findByPersonalId(username);
         if(!client.isPresent())
             throw new UsernameNotFoundException(ErrorCodes.INVALID_LOGIN);
-
-        // Obtener los roles y autorizaciones del usuario
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(Roles.CLIENT));
-
         // Crear un objeto UserDetails con los detalles del usuario
-        return new org.springframework.security.core.userdetails.User(
-                client.get().getPersonalId(),
-                client.get().getPassword(),
-                authorities
-        );
+        return User.builder()
+                    .username(client.get().getPersonalId())
+                    .password(client.get().getPassword())
+                    .roles(Roles.CLIENT)
+                    .build();
     }
 }
