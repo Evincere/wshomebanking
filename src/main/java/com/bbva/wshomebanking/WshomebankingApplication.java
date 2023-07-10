@@ -1,5 +1,6 @@
 package com.bbva.wshomebanking;
 
+import com.bbva.wshomebanking.infrastructure.entities.UserEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

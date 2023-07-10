@@ -21,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+            .antMatchers("/user/create").permitAll()    // dejamos fuera del alcance de la aplicación la gestion de los usuarios administradores
             .antMatchers("/client/create").permitAll()
             .antMatchers("/client/myprofile").hasRole(Roles.CLIENT)
             .antMatchers("/client/update").hasAnyRole(Roles.CLIENT, Roles.ADMIN)
