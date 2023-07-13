@@ -13,6 +13,7 @@ import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.*;
+import com.bbva.wshomebanking.utilities.exceptions.CannotUpdatePersonalIdException;
 import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.ExistingPersonalIdException;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
@@ -75,18 +76,18 @@ public class ClientController {
             return errorResponse;
         }
         try {
-            Client requestedClient = clientFindByUseCase.findByPersonalId(request.getPersonalId()).orElse(null);
+            Client requestedClient = clientFindByUseCase.findById(request.getId()).orElse(null);
             Client authenticatedClient = clientFindByUseCase.findByPersonalId(ControllerUtils.getUserName()).orElse(null);
 
             if(requestedClient == null)
                 throw new Exception(ErrorDescriptions.CLIENT_NOT_FOUND);
 
-            if(requestedClient.getId() != authenticatedClient.getId() || request.getId() != authenticatedClient.getId())
+            if(ControllerUtils.isNotAdmin() && requestedClient.getId() != authenticatedClient.getId())
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
 
             if(ControllerUtils.isNotAdmin())
-                if(request.getNewPersonalId() != null && !request.getNewPersonalId().equals(authenticatedClient.getPersonalId()))
-                    throw new Exception(ErrorDescriptions.CANNOT_UPDATE_PERSONAL_ID);
+                if(!request.getPersonalId().equals(authenticatedClient.getPersonalId()))
+                    throw new CannotUpdatePersonalIdException(ErrorCodes.CANNOT_UPDATE_PERSONAL_ID);
 
             ClientCreateResponse updatedClient = clientUpdateUseCase.update(request);
 
@@ -98,6 +99,8 @@ public class ClientController {
             return ControllerUtils.getBadRequest(e, ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
         } catch (RecordNotFoundException e) {
             return ControllerUtils.getBadRequest(e, ErrorDescriptions.CLIENT_NOT_FOUND);
+        } catch (CannotUpdatePersonalIdException e) {
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.CANNOT_UPDATE_PERSONAL_ID);
         } catch (Exception e ){
             return ControllerUtils.getBadRequest(e, "");
         }

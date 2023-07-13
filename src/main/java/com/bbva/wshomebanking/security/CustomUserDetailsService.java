@@ -53,7 +53,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .roles(Roles.CLIENT)
                     .build();
         }
-
-
     }
 }

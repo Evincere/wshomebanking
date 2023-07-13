@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class Transfer extends Transaction {
 
     public Transfer(ClientAccount targetAccount, BigDecimal amount){
-        this.setTransactionType(TransactionTypes.DEPOSIT);
+        this.setTransactionType(TransactionTypes.TRANSFER);
         this.setAccount(targetAccount);
         this.setAmount(amount);
     }

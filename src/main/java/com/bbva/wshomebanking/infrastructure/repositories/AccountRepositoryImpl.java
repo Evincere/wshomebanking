@@ -61,4 +61,18 @@ public class AccountRepositoryImpl implements IAccountRepository {
 
         return optionalAccount.map(accountEntityMapper::entityToDomain);
     }
+
+    @Override
+    public List<Account> findAll() {
+        List<AccountEntity> accountEntityList = new ArrayList<>();
+        List<Account> accountList = new ArrayList<>();
+
+        accountEntityList = accountSpringRepository.findAll();
+
+        for (AccountEntity entity : accountEntityList) {
+            accountList.add(accountEntityMapper.entityToDomain(entity));
+        }
+
+        return accountList;
+    }
 }

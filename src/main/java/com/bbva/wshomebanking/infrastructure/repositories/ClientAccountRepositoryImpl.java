@@ -76,7 +76,7 @@ public class ClientAccountRepositoryImpl implements IClientAccountRepository {
     public ClientAccount get(int clientId, int account) {
         ClientAccountId clientAccountId = new ClientAccountId(account, clientId);
         Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(clientAccountId);
-        clientAccountSpringRepository.save(clientAccountEntity.get());
+        //clientAccountSpringRepository.save(clientAccountEntity.get());
         return clientAccountEntityMapper.entityToDomain(clientAccountEntity.get());
     }
 }

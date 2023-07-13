@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class Extraction extends Transaction {
 
     public Extraction(ClientAccount targetAccount, BigDecimal amount){
-        this.setTransactionType(TransactionTypes.DEPOSIT);
+        this.setTransactionType(TransactionTypes.WHITDRAWAL);
         this.setAccount(targetAccount);
         this.setAmount(amount);
     }

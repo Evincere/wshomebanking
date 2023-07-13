@@ -11,10 +11,14 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
 public class ClientAccountId implements Serializable {
+
+    public ClientAccountId(int _accountId, int _clientId) {
+        this.accountId = _accountId;
+        this.clientId = _clientId;
+    }
     @Column(name = "account_id")
     private int accountId;
 

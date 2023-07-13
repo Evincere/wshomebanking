@@ -14,6 +14,7 @@ import javax.persistence.*;
 public class UserEntity {
 
     @Id
+    @Column(length = 20)
     private String username;
     private String password;
     private String role;

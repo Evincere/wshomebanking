@@ -30,8 +30,8 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
         try {
             Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
                     new ClientAccountId(
-                            deposit.getAccount().getClient().getId(),
-                            deposit.getAccount().getAccount().getId()
+                            deposit.getAccount().getAccount().getId(),
+                            deposit.getAccount().getClient().getId()
                     ));
             clientAccountEntity.get().getAccount().setBalance(deposit.getAccount().getAccount().getBalance());
 
@@ -55,8 +55,8 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
         try {
             Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
                     new ClientAccountId(
-                            extraction.getAccount().getClient().getId(),
-                            extraction.getAccount().getAccount().getId()
+                            extraction.getAccount().getAccount().getId(),
+                            extraction.getAccount().getClient().getId()
                     ));
             clientAccountEntity.get().getAccount().setBalance(extraction.getAccount().getAccount().getBalance());
 
@@ -80,8 +80,8 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
         try {
             Optional<ClientAccountEntity> clientAccountEntity = clientAccountSpringRepository.findById(
                     new ClientAccountId(
-                            transfer.getAccount().getClient().getId(),
-                            transfer.getAccount().getAccount().getId()
+                            transfer.getAccount().getAccount().getId(),
+                            transfer.getAccount().getClient().getId()
                     ));
             clientAccountEntity.get().getAccount().setBalance(transfer.getAccount().getAccount().getBalance());
 

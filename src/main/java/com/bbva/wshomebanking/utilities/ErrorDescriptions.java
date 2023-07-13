@@ -9,6 +9,7 @@ public class ErrorDescriptions {
     public static final String RELATIONSHIP_ACCOUNT_CLIENT_NOT_CREATED = "No se puedo crear la relacion cliente/cuenta";
     public static final String CANNOT_UPDATE_PERSONAL_ID = "Personal ID puede ser solamente modificado por administradores";
     public static final String GENERIC_ERROR = "Error generico";
+    public static final String TRANSACTION_NOT_ALLOWED = "Transaccion no permitida";
 
 
 }
