@@ -23,6 +23,8 @@ public class AccountEntityMapper {
                 .id(account.getId())
                 .balance(account.getBalance())
                 .currency(account.getCurrency())
+                .active(account.isActive())
+                .clientAccounts(new ArrayList<>())
                 .build();
     }
 
@@ -42,8 +44,9 @@ public class AccountEntityMapper {
                     clientEntity.getEmail(),
                     clientEntity.getAddress(),
                     clientEntity.getPhone(),
-                    null,
-                    null,
+                    clientEntity.isActive(),
+                    clientEntity.getPassword(),
+                    clientEntity.getSalt(),
                     null
             );
             clientAccountList.add(

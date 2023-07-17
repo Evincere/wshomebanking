@@ -19,5 +19,6 @@ public class ClientCreateResponse {
     private String email;
     private String phone;
     private String address;
+    private boolean active;
     private List<Account> accounts;
 }

@@ -1,7 +1,6 @@
 package com.bbva.wshomebanking.infrastructure.repositories;
 
 import com.bbva.wshomebanking.application.repository.IAccountRepository;
-import com.bbva.wshomebanking.application.repository.IClientAccountRepository;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.infrastructure.entities.AccountEntity;
@@ -13,6 +12,8 @@ import com.bbva.wshomebanking.infrastructure.mapper.ClientEntityMapper;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IAccountSpringRepository;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IClientAccountSpringRepository;
 import com.bbva.wshomebanking.utilities.AppConstants;
+import com.bbva.wshomebanking.utilities.ErrorCodes;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -74,5 +75,16 @@ public class AccountRepositoryImpl implements IAccountRepository {
         }
 
         return accountList;
+    }
+
+    @Override
+    public Account updateAccount(Account account) throws ErrorWhenSavingException {
+        try {
+            AccountEntity currentAccount = accountEntityMapper.domainToEntity(account);
+            AccountEntity savedAccount = accountSpringRepository.save(currentAccount);
+            return accountEntityMapper.entityToDomain(savedAccount);
+        } catch (Exception e) {
+            throw new ErrorWhenSavingException(ErrorCodes.COULD_NOT_UPDATE_CLIENT);
+        }
     }
 }

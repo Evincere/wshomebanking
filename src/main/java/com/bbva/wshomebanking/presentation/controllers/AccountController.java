@@ -3,20 +3,25 @@ package com.bbva.wshomebanking.presentation.controllers;
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountListUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IMyAccountsUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IAccountEnableDisableUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.mapper.AccountPresentationMapper;
+import com.bbva.wshomebanking.presentation.request.EnableDisableRequest;
 import com.bbva.wshomebanking.presentation.request.account.AccountCreateRequest;
 import com.bbva.wshomebanking.presentation.request.account.AccountFindRequest;
 import com.bbva.wshomebanking.presentation.response.account.AccountResponse;
 import com.bbva.wshomebanking.presentation.response.account.MyAccountsResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.presentation.response.client.ClientFindResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
+import com.bbva.wshomebanking.utilities.ControllerUtils;
 import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.ErrorDescriptions;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +46,7 @@ public class AccountController {
     private final IAccountFindByUseCase accountFindByUseCase;
     private final IAccountListUseCase accountListUseCase;
     private final IMyAccountsUseCase myAccountsUseCase;
+    private final IAccountEnableDisableUseCase enableDisableUseCase;
     private final AccountPresentationMapper accountPresentationMapper;
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
@@ -125,6 +131,48 @@ public class AccountController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @PatchMapping(value = "/enable", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> enable(@Valid @RequestBody EnableDisableRequest request, BindingResult bindingResult) {
+        ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            request.setActive(true);
+            AccountResponse updatedClient = enableDisableUseCase.switchActive(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedClient);
+
+        } catch (ErrorWhenSavingException e) {
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
+        } catch (RecordNotFoundException e) {
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.CLIENT_NOT_FOUND);
+        } catch (Exception e ){
+            return ControllerUtils.getBadRequest(e, "");
+        }
+    }
+
+    @PatchMapping(value = "/disable", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> disable(@Valid @RequestBody EnableDisableRequest request, BindingResult bindingResult) {
+        ResponseEntity<ErrorResponse> errorResponse = getErrorResponseResponseEntity(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            request.setActive(false);
+            AccountResponse updatedClient = enableDisableUseCase.switchActive(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedClient);
+
+        } catch (ErrorWhenSavingException e) {
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.ERROR_WHEN_SAVING_CLIENT);
+        } catch (RecordNotFoundException e) {
+            return ControllerUtils.getBadRequest(e, ErrorDescriptions.CLIENT_NOT_FOUND);
+        } catch (Exception e ){
+            return ControllerUtils.getBadRequest(e, "");
         }
     }
 

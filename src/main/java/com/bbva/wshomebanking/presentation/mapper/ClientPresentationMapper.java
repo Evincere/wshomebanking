@@ -33,6 +33,7 @@ public class ClientPresentationMapper {
                 .phone(client.getPhone())
                 .address(client.getAddress())
                 .accounts(accountList)
+                .active(client.isActive())
                 .build();
     }
 

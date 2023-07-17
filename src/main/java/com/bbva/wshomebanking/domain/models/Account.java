@@ -17,6 +17,7 @@ public class Account {
     private int id;
     private BigDecimal balance;
     private String currency;
+    private boolean active;
     @JsonIgnore
     private List<ClientAccount> clients;
 

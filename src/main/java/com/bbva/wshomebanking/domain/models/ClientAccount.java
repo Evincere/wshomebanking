@@ -12,4 +12,5 @@ public class ClientAccount {
     private Client client;
     private Account account;
     private String accountHolderType;
+
 }

@@ -26,6 +26,7 @@ public class ClientAccountEntityMapper {
                 clientAccountEntity.getClient().getEmail(),
                 clientAccountEntity.getClient().getAddress(),
                 clientAccountEntity.getClient().getPhone(),
+                clientAccountEntity.getClient().isActive(),
                 null,
                 null,
                 null
@@ -34,6 +35,7 @@ public class ClientAccountEntityMapper {
                 clientAccountEntity.getAccount().getId(),
                 clientAccountEntity.getAccount().getBalance(),
                 clientAccountEntity.getAccount().getCurrency(),
+                clientAccountEntity.getAccount().isActive(),
                 null
         ));
         clientAccount.setAccountHolderType(clientAccountEntity.getHolderType());

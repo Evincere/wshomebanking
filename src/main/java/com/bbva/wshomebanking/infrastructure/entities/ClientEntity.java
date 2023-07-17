@@ -27,6 +27,7 @@ public class ClientEntity {
     private String phone;
     private String password;
     private String salt;
+    private boolean active;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ClientAccountEntity> clientAccounts;
 

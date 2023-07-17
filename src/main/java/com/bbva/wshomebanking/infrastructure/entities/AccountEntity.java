@@ -23,6 +23,7 @@ public class AccountEntity {
     private int id;
     private BigDecimal balance;
     private String currency;
+    private boolean active;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ClientAccountEntity> clientAccounts;
 

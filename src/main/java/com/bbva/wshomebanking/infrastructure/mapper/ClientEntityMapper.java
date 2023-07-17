@@ -28,6 +28,7 @@ public class ClientEntityMapper {
                 .email(client.getEmail())
                 .phone(client.getPhone())
                 .address(client.getAddress())
+                .active(client.isActive())
                 .clientAccounts(new ArrayList<>())
                 .password(client.getPassword())
                 .salt(client.getSalt())
@@ -42,6 +43,7 @@ public class ClientEntityMapper {
         client.setFirstName(clientEntity.getFirstName());
         client.setLastName(clientEntity.getLastName());
         client.setEmail(clientEntity.getEmail());
+        client.setActive(clientEntity.isActive());
         client.setPhone(clientEntity.getPhone());
         client.setAddress(clientEntity.getAddress());
         List<ClientAccount> clientAccountList = new ArrayList<>();
@@ -51,6 +53,7 @@ public class ClientEntityMapper {
                     accountEntity.getId(),
                     accountEntity.getBalance(),
                     accountEntity.getCurrency(),
+                    accountEntity.isActive(),
                     null
             );
             clientAccountList.add(

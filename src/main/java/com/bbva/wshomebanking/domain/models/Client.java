@@ -20,6 +20,7 @@ public class Client {
     private String email;
     private String address;
     private String phone;
+    private boolean active;
     @JsonIgnore
     private String password;
     @JsonIgnore

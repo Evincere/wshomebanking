@@ -6,6 +6,7 @@ import com.bbva.wshomebanking.infrastructure.entities.UserEntity;
 import com.bbva.wshomebanking.infrastructure.repositories.springdatajpa.IUserSpringRepository;
 import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.Roles;
+import com.bbva.wshomebanking.utilities.exceptions.DisabledClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -46,6 +47,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             Optional<Client> client = clientRepository.findByPersonalId(username);
             if(!client.isPresent())
                 throw new UsernameNotFoundException(ErrorCodes.INVALID_LOGIN);
+            if(!client.get().isActive())
+                throw new UsernameNotFoundException(ErrorCodes.DISABLED_USER);
             // Crear un objeto UserDetails con los detalles del usuario
             return User.builder()
                     .username(client.get().getPersonalId())

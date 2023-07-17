@@ -7,6 +7,7 @@ import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.ITransferUseCase;
+import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.presentation.mapper.ClientAccountPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
@@ -45,6 +46,7 @@ public class TransactionController {
     private final IExtractUseCase extractUseCase;
     private final ITransferUseCase transferUseCase;
     private final IMyAccountsUseCase myAccountsUseCase;
+    private final IAccountFindByUseCase accountFindByUseCase;
     private final IClientFindByUseCase clientFindByUseCase;
 
     @PostMapping(value = "/deposit", consumes = "application/json", produces = "application/json")
@@ -128,7 +130,7 @@ public class TransactionController {
 
             for (MyAccountsResponse account : myAccountsResponseList) {
                 if(account.getId() == accountId)
-                    return true;
+                    return areClientAndAccountActive(accountId,clientId);
             }
 
         } catch (ClientNotFoundException e) {
@@ -138,6 +140,18 @@ public class TransactionController {
         return false;
     }
 
+    private boolean areClientAndAccountActive(int accountId, int clientId) {
+        Client client = clientFindByUseCase.findById(clientId).orElse(null);
+        if(client!=null)
+            if(!client.isActive())
+                return false;
 
+        Account account = accountFindByUseCase.findById(accountId).orElse(null);
+        if(account!=null)
+            if(!account.isActive())
+                return false;
+
+        return true;
+    }
 
 }

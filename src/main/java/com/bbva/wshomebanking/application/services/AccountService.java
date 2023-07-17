@@ -6,15 +6,20 @@ import com.bbva.wshomebanking.application.usecases.account.IAccountCreateUseCase
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IAccountListUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IMyAccountsUseCase;
+import com.bbva.wshomebanking.application.usecases.client.IAccountEnableDisableUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.mapper.AccountPresentationMapper;
+import com.bbva.wshomebanking.presentation.request.EnableDisableRequest;
+import com.bbva.wshomebanking.presentation.response.account.AccountResponse;
 import com.bbva.wshomebanking.presentation.response.account.MyAccountsResponse;
+import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.utilities.ErrorCodes;
 import com.bbva.wshomebanking.utilities.ErrorDescriptions;
 import com.bbva.wshomebanking.utilities.exceptions.ClientNotFoundException;
+import com.bbva.wshomebanking.utilities.exceptions.ErrorWhenSavingException;
 import com.bbva.wshomebanking.utilities.exceptions.RecordNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +32,7 @@ import java.util.logging.ErrorManager;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService implements IAccountCreateUseCase, IAccountFindByUseCase, IAccountListUseCase, IMyAccountsUseCase {
+public class AccountService implements IAccountCreateUseCase, IAccountFindByUseCase, IAccountListUseCase, IMyAccountsUseCase, IAccountEnableDisableUseCase {
 
     private final IAccountRepository accountRepository;
     private final IClientRepository clientRepository;
@@ -43,6 +48,7 @@ public class AccountService implements IAccountCreateUseCase, IAccountFindByUseC
             Account account = new Account();
             account.setBalance(BigDecimal.ZERO);
             account.setCurrency(currency);
+            account.setActive(true);
             return accountRepository.create(account, client.get());
         } else {
             throw new RecordNotFoundException(ErrorCodes.RECORD_NOT_FOUND);
@@ -84,5 +90,22 @@ public class AccountService implements IAccountCreateUseCase, IAccountFindByUseC
         }
 
         return myAccountsResponseList;
+    }
+
+    @Override
+    public AccountResponse switchActive(EnableDisableRequest request) throws RecordNotFoundException, ErrorWhenSavingException {
+        Optional<Account> currentAccount = accountRepository.findById(request.getId());
+        if(currentAccount.isPresent()) {
+            currentAccount.get().setActive(request.isActive());
+        } else {
+            throw new RecordNotFoundException(ErrorCodes.RECORD_NOT_FOUND);
+        }
+
+        Account savedAccount = accountRepository.updateAccount(currentAccount.get());
+        for (ClientAccount clientAccount: currentAccount.get().getClients()) {
+            savedAccount.getClients().add(clientAccount);
+        }
+
+        return accountMapper.domainToResponse(savedAccount);
     }
 }

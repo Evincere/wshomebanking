@@ -10,6 +10,7 @@ public class ErrorDescriptions {
     public static final String CANNOT_UPDATE_PERSONAL_ID = "Personal ID puede ser solamente modificado por administradores";
     public static final String GENERIC_ERROR = "Error generico";
     public static final String TRANSACTION_NOT_ALLOWED = "Transaccion no permitida";
+    public static final String DISABLED_USER = "El usuario no se ecuentra hailitado para operar";
 
 
 }

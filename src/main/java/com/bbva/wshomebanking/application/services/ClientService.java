@@ -6,8 +6,8 @@ import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.presentation.mapper.ClientPresentationMapper;
+import com.bbva.wshomebanking.presentation.request.EnableDisableRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientCreateRequest;
-import com.bbva.wshomebanking.presentation.request.client.ClientFindRequest;
 import com.bbva.wshomebanking.presentation.request.client.ClientUpdateRequest;
 import com.bbva.wshomebanking.presentation.response.client.ClientCreateResponse;
 import com.bbva.wshomebanking.utilities.AppConstants;
@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService implements IClientCreateUseCase, IClientFindByUseCase, IClientUpdateUseCase, IClientListUseCase {
+public class ClientService implements IClientCreateUseCase, IClientFindByUseCase, IClientUpdateUseCase, IClientListUseCase, IClientEnableDisableUseCase {
 
     private final IClientRepository clientRepository;
     private final ClientPresentationMapper clientMapper;
@@ -50,11 +50,13 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
         Client client = clientMapper.requestToDomain(request);
         client.setSalt(salt);
         client.setPassword(hashedPassword);
+        client.setActive(true);
 
         // Creo la cuenta por default que nos exige el negocio
         Account account = Account.builder()
                 .currency(AppConstants.getDefaultCurrency())
                 .balance(BigDecimal.ZERO)
+                .active(true)
                 .build();
 
         // Creo la relacion cliente cuenta y la agrego a una lista
@@ -122,5 +124,22 @@ public class ClientService implements IClientCreateUseCase, IClientFindByUseCase
     @Override
     public List<Client> getClientsList() {
         return clientRepository.findAll();
+    }
+
+    @Override
+    public ClientCreateResponse switchActive(EnableDisableRequest request) throws RecordNotFoundException, ErrorWhenSavingException {
+        Optional<Client> currentClient = clientRepository.findById(request.getId());
+        if(currentClient.isPresent()) {
+            currentClient.get().setActive(request.isActive());
+        } else {
+            throw new RecordNotFoundException(ErrorCodes.RECORD_NOT_FOUND);
+        }
+
+        Client savedClient = clientRepository.updateClient(currentClient.get());
+        for (ClientAccount clientAccount: currentClient.get().getAccounts()) {
+            savedClient.getAccounts().add(clientAccount);
+        }
+
+        return clientMapper.domainToResponse(savedClient);
     }
 }
