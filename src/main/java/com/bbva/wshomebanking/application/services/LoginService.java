@@ -21,7 +21,7 @@ public class LoginService implements ILoginUseCase {
     private final CustomUserDetailsService userDetailsService;
     @Override
     public Optional<UserDetails> login(LoginRequest request) throws InvalidLoginException {
-        Optional<Client> client = clientRepository.findByPersonalId(request.getPersonalId());
+        Optional<Client> client = clientRepository.findByPersonalId(request.getUsername());
         if(client.isPresent()){
             String hashedPassword = BCrypt.hashpw(request.getPassword(), client.get().getSalt());
             if(hashedPassword.equals(client.get().getPassword())) {

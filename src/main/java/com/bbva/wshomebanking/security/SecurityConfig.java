@@ -1,14 +1,18 @@
 package com.bbva.wshomebanking.security;
 
 import com.bbva.wshomebanking.utilities.Roles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +22,8 @@ import javax.servlet.http.HttpSession;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private JwtFilter jwtFilter;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -30,8 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/account/**").hasRole(Roles.ADMIN)
             .antMatchers("/clientaccount/**").hasRole(Roles.ADMIN)
             .antMatchers("/transaction/**").hasRole(Roles.CLIENT)
+            .antMatchers("/auth/login").permitAll()
             .anyRequest().authenticated()
         .and()
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .formLogin()
             .loginPage("/login")
             .permitAll()
@@ -45,6 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+    }
+    @Bean
+    //Método para poder obtener nuestro AuthenticationManager y utilizarlo en nuestro AuthController
+    public AuthenticationManager authenticationManager (AuthenticationConfiguration configuration) throws Exception{
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
