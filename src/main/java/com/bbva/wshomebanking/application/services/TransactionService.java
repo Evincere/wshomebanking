@@ -4,12 +4,12 @@ import com.bbva.wshomebanking.application.repository.IAccountRepository;
 import com.bbva.wshomebanking.application.repository.IClientAccountRepository;
 import com.bbva.wshomebanking.application.repository.IClientRepository;
 import com.bbva.wshomebanking.application.repository.ITransactionRepository;
-import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.ITransferUseCase;
+import com.bbva.wshomebanking.application.usecases.transaction.*;
+import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.ClientAccount;
 import com.bbva.wshomebanking.domain.models.transaction.Deposit;
 import com.bbva.wshomebanking.domain.models.transaction.Extraction;
+import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.domain.models.transaction.Transfer;
 import com.bbva.wshomebanking.presentation.mapper.TransactionPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
@@ -20,9 +20,11 @@ import com.bbva.wshomebanking.utilities.exceptions.TransactionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class TransactionService implements IDepositUseCase, IExtractUseCase, ITransferUseCase {
+public class TransactionService implements IDepositUseCase, IExtractUseCase, ITransferUseCase, ITransactionListUseCase, ITransactionFindByUseCase {
 
     private final IClientRepository clientRepository;
     private final IAccountRepository accountRepository;
@@ -76,5 +78,29 @@ public class TransactionService implements IDepositUseCase, IExtractUseCase, ITr
         transfer = transactionRepository.executeTransfer(transfer);
 
         return transactionMapper.domainToResponse(transfer);
+    }
+
+    @Override
+    public List<Transaction> getTransactionList() {
+        return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> findByClientPersonalId(int personalId) {
+
+    }
+
+    @Override
+    public List<Transaction> findByClientId(int id) {
+        Client client = clientRepository.findById(id).orElse(null);
+
+        
+
+
+    }
+
+    @Override
+    public List<Transaction> findByAccountId(int accountId) {
+        return null;
     }
 }

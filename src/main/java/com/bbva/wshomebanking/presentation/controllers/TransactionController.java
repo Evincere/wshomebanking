@@ -6,13 +6,17 @@ import com.bbva.wshomebanking.application.usecases.account.IMyAccountsUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
+import com.bbva.wshomebanking.application.usecases.transaction.ITransactionListUseCase;
 import com.bbva.wshomebanking.application.usecases.transaction.ITransferUseCase;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
+import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.presentation.mapper.ClientAccountPresentationMapper;
+import com.bbva.wshomebanking.presentation.mapper.TransactionPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
 import com.bbva.wshomebanking.presentation.request.transaction.ExtractionRequest;
 import com.bbva.wshomebanking.presentation.request.transaction.TransferRequest;
+import com.bbva.wshomebanking.presentation.response.account.AccountResponse;
 import com.bbva.wshomebanking.presentation.response.account.MyAccountsResponse;
 import com.bbva.wshomebanking.presentation.response.errors.ErrorResponse;
 import com.bbva.wshomebanking.utilities.ErrorCodes;
@@ -29,11 +33,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,9 @@ public class TransactionController {
     private final IMyAccountsUseCase myAccountsUseCase;
     private final IAccountFindByUseCase accountFindByUseCase;
     private final IClientFindByUseCase clientFindByUseCase;
+    private final ITransactionListUseCase transactionListUseCase;
+    private final TransactionPresentationMapper transactionPresentationMapper;
+
 
     @PostMapping(value = "/deposit", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> deposit(@Valid @RequestBody DepositRequest request, BindingResult bindingResult) {
@@ -61,7 +66,9 @@ public class TransactionController {
             TransactionResponse result = depositUseCase.deposit(request);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
         } catch (TransactionNotAllowedException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -79,7 +86,9 @@ public class TransactionController {
             TransactionResponse result = extractUseCase.extract(request);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
         } catch (TransactionNotAllowedException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -97,7 +106,9 @@ public class TransactionController {
             TransactionResponse result = transferUseCase.transfer(request);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
         } catch (TransactionNotAllowedException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            ArrayList<String> errors = new ArrayList<>();
+            errors.add(ErrorDescriptions.TRANSACTION_NOT_ALLOWED);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), errors));
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -152,6 +163,30 @@ public class TransactionController {
                 return false;
 
         return true;
+    }
+
+    @GetMapping(value = "/list", produces = "application/json")
+    public ResponseEntity<?> list() {
+
+        try {
+            List<Transaction> transactionList = null;
+            List<TransactionResponse>transactionResponses = new ArrayList<>();
+
+            transactionList = transactionListUseCase.getTransactionList();
+
+            if(transactionList == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de cuentas", null));
+
+            for (Transaction transaction :
+                    transactionList) {
+                transactionResponses.add(transactionPresentationMapper.domainToResponse(transaction));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(transactionResponses);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
     }
 
 }

@@ -44,7 +44,7 @@ public class AuthController {
         //creamos el jwt que le vamos a enviar al usuario autenticado
         String jwt = jwtUtil.create(loginRequest.getUsername());
 
-        //asignamos ese jwt como respuesta a nuestra solicitud
+        //asignamos ese jwt como respuesta a nuestra solicitudN
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION,jwt).build();
     }
 }

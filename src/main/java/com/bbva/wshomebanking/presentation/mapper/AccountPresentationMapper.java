@@ -27,6 +27,7 @@ public class AccountPresentationMapper {
                 .currency(account.getCurrency())
                 .balance(BigDecimal.ZERO)
                 .clients(clientList)
+                .active(account.isActive())
                 .build();
     }
 

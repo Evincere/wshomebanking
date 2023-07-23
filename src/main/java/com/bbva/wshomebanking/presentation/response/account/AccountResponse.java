@@ -17,5 +17,6 @@ public class AccountResponse {
     private BigDecimal balance;
     private String currency;
     private List<Client> clients;
+    private boolean active;
 
 }

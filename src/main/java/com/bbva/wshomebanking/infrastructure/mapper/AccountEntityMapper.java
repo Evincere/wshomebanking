@@ -33,6 +33,7 @@ public class AccountEntityMapper {
         account.setId(accountEntity.getId());
         account.setCurrency(accountEntity.getCurrency());
         account.setBalance(accountEntity.getBalance());
+        account.setActive(accountEntity.isActive());
         List<ClientAccount> clientAccountList = new ArrayList<>();
         for (ClientAccountEntity clientAccountEntity : accountEntity.getClientAccounts()) {
             ClientEntity clientEntity = clientAccountEntity.getClient();
