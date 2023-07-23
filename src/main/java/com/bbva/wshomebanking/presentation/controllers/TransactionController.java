@@ -4,10 +4,7 @@ import com.bbva.wshomebanking.application.repository.ITransactionRepository;
 import com.bbva.wshomebanking.application.usecases.account.IAccountFindByUseCase;
 import com.bbva.wshomebanking.application.usecases.account.IMyAccountsUseCase;
 import com.bbva.wshomebanking.application.usecases.client.IClientFindByUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.IDepositUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.IExtractUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.ITransactionListUseCase;
-import com.bbva.wshomebanking.application.usecases.transaction.ITransferUseCase;
+import com.bbva.wshomebanking.application.usecases.transaction.*;
 import com.bbva.wshomebanking.domain.models.Account;
 import com.bbva.wshomebanking.domain.models.Client;
 import com.bbva.wshomebanking.domain.models.transaction.Transaction;
@@ -37,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,6 +49,7 @@ public class TransactionController {
     private final IAccountFindByUseCase accountFindByUseCase;
     private final IClientFindByUseCase clientFindByUseCase;
     private final ITransactionListUseCase transactionListUseCase;
+    private final ITransactionFindByUseCase transactionFindByUseCase;
     private final TransactionPresentationMapper transactionPresentationMapper;
 
 
@@ -172,7 +171,85 @@ public class TransactionController {
             List<Transaction> transactionList = null;
             List<TransactionResponse>transactionResponses = new ArrayList<>();
 
+            transactionFindByUseCase.findByClientId(1);
+
             transactionList = transactionListUseCase.getTransactionList();
+
+            if(transactionList == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de cuentas", null));
+
+            for (Transaction transaction :
+                    transactionList) {
+                transactionResponses.add(transactionPresentationMapper.domainToResponse(transaction));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(transactionResponses);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(value = "/client/{id}", produces = "application/json")
+    public ResponseEntity<?> clientTransactions(@PathVariable("id") int clientId) {
+
+        try {
+            List<Transaction> transactionList = null;
+            List<TransactionResponse>transactionResponses = new ArrayList<>();
+
+            transactionList = transactionFindByUseCase.findByClientId(clientId);
+
+            if(transactionList == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de cuentas", null));
+
+            for (Transaction transaction :
+                    transactionList) {
+                transactionResponses.add(transactionPresentationMapper.domainToResponse(transaction));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(transactionResponses);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(value = "/account/{id}", produces = "application/json")
+    public ResponseEntity<?> accountTransactions(@PathVariable("id") int accountId) {
+
+        try {
+            List<Transaction> transactionList = null;
+            List<TransactionResponse>transactionResponses = new ArrayList<>();
+
+            transactionList = transactionFindByUseCase.findByAccountId(accountId);
+
+            if(transactionList == null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de cuentas", null));
+
+            for (Transaction transaction :
+                    transactionList) {
+                transactionResponses.add(transactionPresentationMapper.domainToResponse(transaction));
+            }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(transactionResponses);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(value = "/mytransactions", produces = "application/json")
+    public ResponseEntity<?> myTransactions() {
+        try {
+            List<Transaction> transactionList = null;
+            List<TransactionResponse>transactionResponses = new ArrayList<>();
+            Optional<Client> client = null;
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            client = clientFindByUseCase.findByPersonalId(username);
+
+            transactionList = transactionFindByUseCase.findByClientId(client.get().getId());
 
             if(transactionList == null)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No se pudo obtener la lista de cuentas", null));

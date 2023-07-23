@@ -143,4 +143,42 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
 
         return transactionList;
     }
+
+    @Override
+    public List<Transaction> findByClientId(int clientId) {
+        List<TransactionEntity> transactionEntityList = new ArrayList<>();
+        List<Transaction> transactionList = new ArrayList<>();
+
+        transactionEntityList = transactionSpringRepository.findByClientId(clientId);
+
+        for (TransactionEntity entity : transactionEntityList) {
+            if(entity.getTransactionType().equals(TransactionTypes.DEPOSIT))
+                transactionList.add(transactionEntityMapper.depositEntityToDomain(entity));
+            if(entity.getTransactionType().equals(TransactionTypes.TRANSFER))
+                transactionList.add(transactionEntityMapper.transferEntityToDomain(entity));
+            if(entity.getTransactionType().equals(TransactionTypes.WHITDRAWAL))
+                transactionList.add(transactionEntityMapper.extractionEntityToDomain(entity));
+        }
+
+        return transactionList;
+    }
+
+    @Override
+    public List<Transaction> findByAccountId(int accountId) {
+        List<TransactionEntity> transactionEntityList = new ArrayList<>();
+        List<Transaction> transactionList = new ArrayList<>();
+
+        transactionEntityList = transactionSpringRepository.findByAccountId(accountId);
+
+        for (TransactionEntity entity : transactionEntityList) {
+            if(entity.getTransactionType().equals(TransactionTypes.DEPOSIT))
+                transactionList.add(transactionEntityMapper.depositEntityToDomain(entity));
+            if(entity.getTransactionType().equals(TransactionTypes.TRANSFER))
+                transactionList.add(transactionEntityMapper.transferEntityToDomain(entity));
+            if(entity.getTransactionType().equals(TransactionTypes.WHITDRAWAL))
+                transactionList.add(transactionEntityMapper.extractionEntityToDomain(entity));
+        }
+
+        return transactionList;
+    }
 }

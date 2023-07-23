@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/transaction/deposit").hasRole(Roles.CLIENT)
             .antMatchers("/transaction/transfer").hasRole(Roles.CLIENT)
             .antMatchers("/transaction/extraction").hasRole(Roles.CLIENT)
+            .antMatchers("/transaction/mytransactions").hasRole(Roles.CLIENT)
             .antMatchers("/transaction/**").hasRole(Roles.ADMIN)
             .antMatchers("/auth/login").permitAll()
             .anyRequest().authenticated()

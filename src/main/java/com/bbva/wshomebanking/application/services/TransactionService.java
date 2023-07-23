@@ -11,6 +11,7 @@ import com.bbva.wshomebanking.domain.models.transaction.Deposit;
 import com.bbva.wshomebanking.domain.models.transaction.Extraction;
 import com.bbva.wshomebanking.domain.models.transaction.Transaction;
 import com.bbva.wshomebanking.domain.models.transaction.Transfer;
+import com.bbva.wshomebanking.infrastructure.entities.TransactionEntity;
 import com.bbva.wshomebanking.presentation.mapper.TransactionPresentationMapper;
 import com.bbva.wshomebanking.presentation.request.transaction.DepositRequest;
 import com.bbva.wshomebanking.presentation.request.transaction.ExtractionRequest;
@@ -87,20 +88,16 @@ public class TransactionService implements IDepositUseCase, IExtractUseCase, ITr
 
     @Override
     public List<Transaction> findByClientPersonalId(int personalId) {
-
+        return null;
     }
 
     @Override
     public List<Transaction> findByClientId(int id) {
-        Client client = clientRepository.findById(id).orElse(null);
-
-        
-
-
+        return transactionRepository.findByClientId(id);
     }
 
     @Override
     public List<Transaction> findByAccountId(int accountId) {
-        return null;
+        return transactionRepository.findByAccountId(accountId);
     }
 }

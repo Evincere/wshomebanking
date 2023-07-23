@@ -14,7 +14,7 @@ public class TransactionPresentationMapper {
                 .transactionType(transaction.getTransactionType())
                 .accountFrom(transaction.getAccount().getAccount().getId())
                 .amount(transaction.getAmount())
+                .clientId(transaction.getAccount().getClient().getId())
                 .build();
     }
-
 }

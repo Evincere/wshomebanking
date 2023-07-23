@@ -20,5 +20,7 @@ public interface ITransactionRepository {
     Transfer executeTransfer(Transfer transfer) throws TransactionException;
     Optional<Transaction> findById(int id) throws RecordNotFoundException;
     List<Transaction> findAll();
+    List<Transaction> findByClientId(int id);
+    List<Transaction> findByAccountId(int id);
 
 }

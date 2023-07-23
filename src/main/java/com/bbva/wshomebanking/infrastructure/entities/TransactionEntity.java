@@ -33,8 +33,6 @@ public class TransactionEntity {
     @Column(name = "amount")
     private BigDecimal amount;
 
-    // Omitted getters and setters
-
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable = false, updatable = false),
